@@ -5,6 +5,8 @@
     </a>
 </div>
 
+<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Las notas, cursos, semestres y secciones son datos de demostración.</div>
+
 <div class="card mb-4">
     <div class="card-body">
         <form action="/reportes/notas" method="GET" class="row g-3">
@@ -80,7 +82,7 @@
                     <repeat group="{{ @notas }}" value="{{ @nota }}">
                         <tr>
                             <td>{{ @nota.nombre_carrera }}</td>
-                            <td>{{ @nota.apellidos }}, {{ @nota.nombres }}</td>
+                            <td><a href="/reportes/alumno/{{ @nota.id_alumno }}">{{ @nota.apellidos }}, {{ @nota.nombres }}</a></td>
                             <td>{{ @nota.codigo_curso }} - {{ @nota.nombre_curso }}</td>
                             <td>{{ @nota.nombre_seccion }}</td>
                             <td>{{ @nota.nombre_semestre }}</td>

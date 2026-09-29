@@ -1,6 +1,14 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Reporte de Alumnos por Carrera</h1>
+    <div>
+        <h1 class="h2">Reporte de Alumnos por Carrera</h1>
+        <p class="text-muted mb-0">{{ @alumnos_count }} alumnos de ejemplo en este reporte.</p>
+    </div>
+    <a href="/reportes/alumnos/exportar-csv?id_carrera={{ @id_carrera }}" class="btn btn-success">
+        <i class="bi bi-download me-1"></i> Descargar CSV
+    </a>
 </div>
+
+<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Reporte de demostración con alumnos y carreras de ejemplo.</div>
 
 <div class="card mb-4">
     <div class="card-body">
@@ -36,6 +44,7 @@
                         <th>Carrera</th>
                         <th>Fecha Nacimiento</th>
                         <th>Fecha Registro</th>
+                        <th class="text-end">Historial</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,11 +63,16 @@
                             <td>{{ @alumno.nombre_carrera }}</td>
                             <td>{{ @alumno.fecha_nacimiento ? date('d/m/Y', strtotime(@alumno.fecha_nacimiento)) : '' }}</td>
                             <td>{{ @alumno.fecha_registro ? date('d/m/Y', strtotime(@alumno.fecha_registro)) : '' }}</td>
+                            <td class="text-end">
+                                <a href="/reportes/alumno/{{ @alumno.id_alumno }}" class="btn btn-sm btn-outline-primary" aria-label="Ver historial de {{ @alumno.nombres }} {{ @alumno.apellidos }}">
+                                    <i class="bi bi-journal-text me-1"></i> Ver historial
+                                </a>
+                            </td>
                         </tr>
                     </repeat>
                     <check if="{{ count(@alumnos) == 0 }}">
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">No hay alumnos para mostrar</td>
+                            <td colspan="6" class="text-center text-muted py-4">No hay alumnos para mostrar</td>
                         </tr>
                     </check>
                 </tbody>

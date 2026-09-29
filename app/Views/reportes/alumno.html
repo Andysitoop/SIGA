@@ -10,6 +10,8 @@
     </div>
 </div>
 
+<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Historial individual de demostración con datos de ejemplo.</div>
+
 <div class="row mb-4">
     <div class="col-md-4">
         <div class="card">
@@ -43,11 +45,7 @@
                     <tr>
                         <th>Estado:</th>
                         <td>
-                            <check if="{{ @alumno.activo }}">
-                                <span class="badge bg-success">Activo</span>
-                            <else>
-                                <span class="badge bg-secondary">Inactivo</span>
-                            </check>
+                            <span class="badge bg-{{ @alumno.activo ? 'success' : 'secondary' }}">{{ @alumno.activo ? 'Activo' : 'Inactivo' }}</span>
                         </td>
                     </tr>
                 </table>

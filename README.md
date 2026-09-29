@@ -239,6 +239,16 @@ sistema-academico/
 - `GET /` - Dashboard principal
 - `GET /ajustes` - Preferencias de idioma y cuentas de demostración
 
+### Informes de demostración
+- `GET /reportes/alumnos` - Consulta los seis alumnos precargados y filtra por carrera
+- `GET /reportes/alumnos/exportar-csv` - Descarga alumnos, respetando el filtro de carrera
+- `GET /reportes/notas` - Filtra las calificaciones demo por carrera, curso, sección y semestre
+- `GET /reportes/notas/exportar-csv` - Descarga las notas con los filtros seleccionados
+- `GET /reportes/alumno/{id}` - Consulta los datos y el historial académico de un alumno
+- `GET /reportes/alumno/{id}/exportar-csv` - Descarga el historial y las estadísticas del alumno
+
+Los informes de demostración usan seis alumnos, tres carreras, cuatro cursos, dos semestres, tres secciones y 18 notas precargadas en código; no necesitan conectarse a MySQL.
+
 ### Alumnos
 - `GET /alumnos` - Listar alumnos
 - `GET /alumnos/buscar` - Buscar alumnos
@@ -298,6 +308,7 @@ sistema-academico/
 
 ### Reportes
 - `GET /reportes/alumnos` - Reporte alumnos por carrera
+- `GET /reportes/alumnos/exportar-csv` - Exportar alumnos filtrados por carrera a CSV
 - `GET /reportes/notas` - Reporte de notas con filtros
 - `GET /reportes/alumno/{id}` - Reporte individual alumno
 - `GET /reportes/notas/exportar-csv` - Exportar notas a CSV
