@@ -1,0 +1,103 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Detalle del Alumno</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="/alumnos" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        <a href="/alumnos/{{ @alumno.id_alumno }}/editar" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i> Editar
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <check if {{ @alumno.foto_url }}>
+                    <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno-lg mb-3">
+                <else>
+                    <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-3">
+                        <i class="bi bi-person fs-1"></i>
+                    </div>
+                </check>
+                <h5 class="card-title">{{ @alumno.nombres }} {{ @alumno.apellidos }}</h5>
+                <p class="card-text text-muted">{{ @alumno.nombre_carrera }}</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title mb-3">Información Personal</h6>
+                <table class="table table-sm">
+                    <tr>
+                        <th class="w-50">Fecha de Nacimiento:</th>
+                        <td>{{ @alumno.fecha_nacimiento|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Registro:</th>
+                        <td>{{ @alumno.fecha_registro|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>
+                            <check if {{ @alumno.activo }}>
+                                <span class="badge bg-success">Activo</span>
+                            <else>
+                                <span class="badge bg-secondary">Inactivo</span>
+                            </check>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Historial de Notas</span>
+                <a href="/notas/nuevo?id_alumno={{ @alumno.id_alumno }}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i> Agregar Nota
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Semestre</th>
+                                <th>Sección</th>
+                                <th>Código</th>
+                                <th>Curso</th>
+                                <th>Nota</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <repeat group="{{ @notas }}" value="{{ @nota }}">
+                                <tr>
+                                    <td>{{ @nota.nombre_semestre }}</td>
+                                    <td>{{ @nota.nombre_seccion }}</td>
+                                    <td>{{ @nota.codigo_curso }}</td>
+                                    <td>{{ @nota.nombre_curso }}</td>
+                                    <td>{{ @nota.nota }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ @nota.nota >= 60 ? 'success' : 'danger' }}">
+                                            {{ @nota.nota >= 60 ? 'Aprobado' : 'Reprobado' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </repeat>
+                            <check if {{ @notas|count }} == 0>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No hay notas registradas</td>
+                                </tr>
+                            </check>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,122 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Historial de Notas</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="/notas/buscar" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+        <a href="/notas/nuevo?id_alumno={{ @alumno.id_alumno }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Agregar Nota
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <check if {{ @alumno.foto_url }}>
+                        <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno me-3">
+                    <else>
+                        <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white me-3">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    </check>
+                    <div>
+                        <h5 class="mb-0">{{ @alumno.nombres }} {{ @alumno.apellidos }}</h5>
+                        <small class="text-muted">{{ @alumno.nombre_carrera }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card stats-card mb-0">
+                    <div class="card-body text-center">
+                        <p class="stats-number">{{ @stats.total_cursos }}</p>
+                        <p class="text-muted mb-0">Total Cursos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card mb-0" style="border-left-color: #198754;">
+                    <div class="card-body text-center">
+                        <p class="stats-number text-success">{{ @stats.cursos_aprobados }}</p>
+                        <p class="text-muted mb-0">Aprobados</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card mb-0" style="border-left-color: #dc3545;">
+                    <div class="card-body text-center">
+                        <p class="stats-number text-danger">{{ @stats.cursos_reprobados }}</p>
+                        <p class="text-muted mb-0">Reprobados</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card mb-0" style="border-left-color: #0dcaf0;">
+                    <div class="card-body text-center">
+                        <p class="stats-number text-info">{{ @stats.promedio_general }}</p>
+                        <p class="text-muted mb-0">Promedio</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Semestre</th>
+                        <th>Sección</th>
+                        <th>Código</th>
+                        <th>Curso</th>
+                        <th>Nota</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <repeat group="{{ @notas }}" value="{{ @nota }}">
+                        <tr>
+                            <td>{{ @nota.nombre_semestre }}</td>
+                            <td>{{ @nota.nombre_seccion }}</td>
+                            <td>{{ @nota.codigo_curso }}</td>
+                            <td>{{ @nota.nombre_curso }}</td>
+                            <td>{{ @nota.nota }}</td>
+                            <td>
+                                <span class="badge bg-{{ @nota.nota >= @nota_minima ? 'success' : 'danger' }}">
+                                    {{ @nota.nota >= @nota_minima ? 'Aprobado' : 'Reprobado' }}
+                                </span>
+                            </td>
+                            <td>{{ @nota.fecha_registro|date:"d/m/Y" }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="/notas/{{ @nota.id_nota }}/editar" class="btn btn-outline-primary" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="/notas/{{ @nota.id_nota }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
+                                        <i class="bi bi-x-circle"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </repeat>
+                    <check if {{ @notas|count }} == 0>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">No hay notas registradas</td>
+                        </tr>
+                    </check>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
