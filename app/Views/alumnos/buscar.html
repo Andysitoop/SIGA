@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<check if {{ @query }}>
+<check if="{{ @query }}">
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -38,7 +38,7 @@
                         <repeat group="{{ @alumnos }}" value="{{ @alumno }}">
                             <tr>
                                 <td>
-                                    <check if {{ @alumno.fotografia }}>
+                                    <check if="{{ @alumno.fotografia }}">
                                         <img src="{{ @alumno.fotografia }}" alt="Foto" class="foto-alumno">
                                     <else>
                                         <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
@@ -48,7 +48,7 @@
                                 </td>
                                 <td>{{ @alumno.apellidos }}, {{ @alumno.nombres }}</td>
                                 <td>{{ @alumno.nombre_carrera }}</td>
-                                <td>{{ @alumno.fecha_nacimiento|date:"d/m/Y" }}</td>
+                                <td>{{ @alumno.fecha_nacimiento ? date('d/m/Y', strtotime(@alumno.fecha_nacimiento)) : '' }}</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
                                         <a href="/alumnos/{{ @alumno.id_alumno }}" class="btn btn-outline-info" title="Ver">
@@ -64,7 +64,7 @@
                                 </td>
                             </tr>
                         </repeat>
-                        <check if {{ @alumnos|count }} == 0>
+                        <check if="{{ count(@alumnos) == 0 }}">
                             <tr>
                                 <td colspan="5" class="text-center text-muted py-4">No se encontraron resultados para "{{ @query }}"</td>
                             </tr>

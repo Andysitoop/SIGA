@@ -34,7 +34,7 @@
                                     {{ @nota.nota >= 60 ? 'Aprobado' : 'Reprobado' }}
                                 </span>
                             </td>
-                            <td>{{ @nota.fecha_registro|date:"d/m/Y" }}</td>
+                            <td>{{ @nota.fecha_registro ? date('d/m/Y', strtotime(@nota.fecha_registro)) : '' }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <a href="/notas/{{ @nota.id_nota }}/editar" class="btn btn-outline-primary" title="Editar">
@@ -47,7 +47,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @notas|count }} == 0>
+                    <check if="{{ count(@notas) == 0 }}">
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">No hay notas registradas</td>
                         </tr>

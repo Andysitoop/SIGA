@@ -33,7 +33,7 @@ class AlumnoController
         $f3->set('totalPages', $totalPages);
         $f3->set('total', $total);
         $f3->set('title', 'Alumnos');
-        $f3->set('content', 'alumnos/index');
+        $f3->set('content', 'alumnos/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -56,7 +56,7 @@ class AlumnoController
         $f3->set('alumnos', $alumnos);
         $f3->set('query', $query);
         $f3->set('title', 'Buscar Alumnos');
-        $f3->set('content', 'alumnos/buscar');
+        $f3->set('content', 'alumnos/buscar.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -73,7 +73,7 @@ class AlumnoController
         
         $f3->set('carreras', $carreras);
         $f3->set('title', 'Nuevo Alumno');
-        $f3->set('content', 'alumnos/form');
+        $f3->set('content', 'alumnos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -182,7 +182,7 @@ class AlumnoController
         
         $f3->set('alumno', $alumno);
         $f3->set('title', 'Detalle del Alumno');
-        $f3->set('content', 'alumnos/ver');
+        $f3->set('content', 'alumnos/ver.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -212,7 +212,7 @@ class AlumnoController
         $f3->set('alumno', $alumno);
         $f3->set('carreras', $carreras);
         $f3->set('title', 'Editar Alumno');
-        $f3->set('content', 'alumnos/form');
+        $f3->set('content', 'alumnos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');

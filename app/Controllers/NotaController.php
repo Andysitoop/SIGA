@@ -27,7 +27,7 @@ class NotaController
         
         $f3->set('notas', $notas);
         $f3->set('title', 'Notas');
-        $f3->set('content', 'notas/index');
+        $f3->set('content', 'notas/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -50,7 +50,7 @@ class NotaController
         $f3->set('alumnos', $alumnos);
         $f3->set('query', $query);
         $f3->set('title', 'Buscar Alumno para Notas');
-        $f3->set('content', 'notas/buscar');
+        $f3->set('content', 'notas/buscar.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -84,7 +84,7 @@ class NotaController
         $f3->set('stats', $stats);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Historial de Notas');
-        $f3->set('content', 'notas/historial');
+        $f3->set('content', 'notas/historial.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -126,7 +126,7 @@ class NotaController
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('nota_maxima', $config['nota_maxima']);
         $f3->set('title', 'Registrar Nota');
-        $f3->set('content', 'notas/form');
+        $f3->set('content', 'notas/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -251,7 +251,7 @@ class NotaController
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('nota_maxima', $config['nota_maxima']);
         $f3->set('title', 'Editar Nota');
-        $f3->set('content', 'notas/form');
+        $f3->set('content', 'notas/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');

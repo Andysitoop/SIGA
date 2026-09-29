@@ -41,7 +41,7 @@
                     <repeat group="{{ @alumnos }}" value="{{ @alumno }}">
                         <tr>
                             <td>
-                                <check if {{ @alumno.fotografia }}>
+                                <check if="{{ @alumno.fotografia }}">
                                     <img src="{{ @alumno.fotografia }}" alt="Foto" class="foto-alumno">
                                 <else>
                                     <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
@@ -51,10 +51,10 @@
                             </td>
                             <td>{{ @alumno.apellidos }}, {{ @alumno.nombres }}</td>
                             <td>{{ @alumno.nombre_carrera }}</td>
-                            <td>{{ @alumno.fecha_nacimiento|date:"d/m/Y" }}</td>
-                            <td>{{ @alumno.fecha_registro|date:"d/m/Y" }}</td>
+                            <td>{{ @alumno.fecha_nacimiento ? date('d/m/Y', strtotime(@alumno.fecha_nacimiento)) : '' }}</td>
+                            <td>{{ @alumno.fecha_registro ? date('d/m/Y', strtotime(@alumno.fecha_registro)) : '' }}</td>
                             <td>
-                                <check if {{ @alumno.activo }}>
+                                <check if="{{ @alumno.activo }}">
                                     <span class="badge bg-success">Activo</span>
                                 <else>
                                     <span class="badge bg-secondary">Inactivo</span>
@@ -68,7 +68,7 @@
                                     <a href="/alumnos/{{ @alumno.id_alumno }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if {{ @alumno.activo }}>
+                                    <check if="{{ @alumno.activo }}">
                                         <a href="/alumnos/{{ @alumno.id_alumno }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
                                             <i class="bi bi-x-circle"></i>
                                         </a>
@@ -84,7 +84,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @alumnos|count }} == 0>
+                    <check if="{{ count(@alumnos) == 0 }}">
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">No hay alumnos registrados</td>
                         </tr>
@@ -93,21 +93,21 @@
             </table>
         </div>
     </div>
-    <check if {{ @totalPages }} > 1>
+    <check if="{{ @totalPages > 1 }}">
         <div class="card-footer">
             <nav>
                 <ul class="pagination justify-content-center mb-0">
-                    <check if {{ @page }} > 1>
+                    <check if="{{ @page > 1 }}">
                         <li class="page-item">
                             <a class="page-link" href="/alumnos?page={{ @page - 1 }}">Anterior</a>
                         </li>
                     </check>
                     <repeat group="{{ range(1, @totalPages) }}" value="{{ @p }}">
-                        <li class="page-item <check if {{ @p }} == {{ @page }}>active</check>">
+                        <li class="page-item <check if="{{ @p == @page }}">active</check>">
                             <a class="page-link" href="/alumnos?page={{ @p }}">{{ @p }}</a>
                         </li>
                     </repeat>
-                    <check if {{ @page }} < {{ @totalPages }}>
+                    <check if="{{ @page < @totalPages }}">
                         <li class="page-item">
                             <a class="page-link" href="/alumnos?page={{ @page + 1 }}">Siguiente</a>
                         </li>

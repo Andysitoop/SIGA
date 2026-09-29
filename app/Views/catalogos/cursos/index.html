@@ -25,9 +25,9 @@
                         <tr>
                             <td>{{ @curso.codigo }}</td>
                             <td>{{ @curso.nombre }}</td>
-                            <td>{{ @curso.fecha_registro|date:"d/m/Y H:i" }}</td>
+                            <td>{{ @curso.fecha_registro ? date('d/m/Y H:i', strtotime(@curso.fecha_registro)) : '' }}</td>
                             <td>
-                                <check if {{ @curso.activo }}>
+                                <check if="{{ @curso.activo }}">
                                     <span class="badge bg-success">Activo</span>
                                 <else>
                                     <span class="badge bg-secondary">Inactivo</span>
@@ -38,7 +38,7 @@
                                     <a href="/cursos/{{ @curso.id_curso }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if {{ @curso.activo }}>
+                                    <check if="{{ @curso.activo }}">
                                         <a href="/cursos/{{ @curso.id_curso }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
                                             <i class="bi bi-x-circle"></i>
                                         </a>
@@ -51,7 +51,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @cursos|count }} == 0>
+                    <check if="{{ count(@cursos) == 0 }}">
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">No hay cursos registrados</td>
                         </tr>

@@ -41,7 +41,7 @@ class ReporteController
         $f3->set('alumnos', $alumnos);
         $f3->set('id_carrera', $idCarrera);
         $f3->set('title', 'Reporte de Alumnos por Carrera');
-        $f3->set('content', 'reportes/alumnos');
+        $f3->set('content', 'reportes/alumnos.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -89,7 +89,7 @@ class ReporteController
         $f3->set('id_semestre', $idSemestre);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Reporte de Notas');
-        $f3->set('content', 'reportes/notas');
+        $f3->set('content', 'reportes/notas.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -128,7 +128,7 @@ class ReporteController
         $f3->set('stats', $stats);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Reporte Individual del Alumno');
-        $f3->set('content', 'reportes/alumno');
+        $f3->set('content', 'reportes/alumno.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }

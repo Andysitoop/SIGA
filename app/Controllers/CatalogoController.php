@@ -26,7 +26,7 @@ class CatalogoController
         
         $f3->set('carreras', $carreras);
         $f3->set('title', 'Carreras');
-        $f3->set('content', 'catalogos/carreras/index');
+        $f3->set('content', 'catalogos/carreras/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -40,7 +40,7 @@ class CatalogoController
         
         $f3 = \Base::instance();
         $f3->set('title', 'Nueva Carrera');
-        $f3->set('content', 'catalogos/carreras/form');
+        $f3->set('content', 'catalogos/carreras/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -111,7 +111,7 @@ class CatalogoController
         
         $f3->set('carrera', $carrera);
         $f3->set('title', 'Editar Carrera');
-        $f3->set('content', 'catalogos/carreras/form');
+        $f3->set('content', 'catalogos/carreras/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -217,7 +217,7 @@ class CatalogoController
         
         $f3->set('cursos', $cursos);
         $f3->set('title', 'Cursos');
-        $f3->set('content', 'catalogos/cursos/index');
+        $f3->set('content', 'catalogos/cursos/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -231,7 +231,7 @@ class CatalogoController
         
         $f3 = \Base::instance();
         $f3->set('title', 'Nuevo Curso');
-        $f3->set('content', 'catalogos/cursos/form');
+        $f3->set('content', 'catalogos/cursos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -311,7 +311,7 @@ class CatalogoController
         
         $f3->set('curso', $curso);
         $f3->set('title', 'Editar Curso');
-        $f3->set('content', 'catalogos/cursos/form');
+        $f3->set('content', 'catalogos/cursos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -426,7 +426,7 @@ class CatalogoController
         
         $f3->set('semestres', $semestres);
         $f3->set('title', 'Semestres');
-        $f3->set('content', 'catalogos/semestres/index');
+        $f3->set('content', 'catalogos/semestres/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -440,7 +440,7 @@ class CatalogoController
         
         $f3 = \Base::instance();
         $f3->set('title', 'Nuevo Semestre');
-        $f3->set('content', 'catalogos/semestres/form');
+        $f3->set('content', 'catalogos/semestres/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -511,7 +511,7 @@ class CatalogoController
         
         $f3->set('semestre', $semestre);
         $f3->set('title', 'Editar Semestre');
-        $f3->set('content', 'catalogos/semestres/form');
+        $f3->set('content', 'catalogos/semestres/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -617,7 +617,7 @@ class CatalogoController
         
         $f3->set('secciones', $secciones);
         $f3->set('title', 'Secciones');
-        $f3->set('content', 'catalogos/secciones/index');
+        $f3->set('content', 'catalogos/secciones/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }
@@ -631,7 +631,7 @@ class CatalogoController
         
         $f3 = \Base::instance();
         $f3->set('title', 'Nueva Sección');
-        $f3->set('content', 'catalogos/secciones/form');
+        $f3->set('content', 'catalogos/secciones/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');
@@ -702,7 +702,7 @@ class CatalogoController
         
         $f3->set('seccion', $seccion);
         $f3->set('title', 'Editar Sección');
-        $f3->set('content', 'catalogos/secciones/form');
+        $f3->set('content', 'catalogos/secciones/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
         
         echo \Template::instance()->render('layouts/main.html');

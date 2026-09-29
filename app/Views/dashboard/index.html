@@ -79,10 +79,10 @@
                                 <tr>
                                     <td>{{ @alumno.apellidos }}, {{ @alumno.nombres }}</td>
                                     <td>{{ @alumno.nombre_carrera }}</td>
-                                    <td>{{ @alumno.fecha_registro|date:"d/m/Y" }}</td>
+                                    <td>{{ @alumno.fecha_registro ? date('d/m/Y', strtotime(@alumno.fecha_registro)) : '' }}</td>
                                 </tr>
                             </repeat>
-                            <check if {{ @ultimos_alumnos|count }} == 0>
+                            <check if="{{ count(@ultimos_alumnos) == 0 }}">
                                 <tr>
                                     <td colspan="3" class="text-center text-muted">No hay alumnos registrados</td>
                                 </tr>
@@ -121,7 +121,7 @@
                                     </td>
                                 </tr>
                             </repeat>
-                            <check if {{ @ultimas_notas|count }} == 0>
+                            <check if="{{ count(@ultimas_notas) == 0 }}">
                                 <tr>
                                     <td colspan="3" class="text-center text-muted">No hay notas registradas</td>
                                 </tr>

@@ -10,8 +10,23 @@ Sistema web para gestión de alumnos, cursos y notas de una escuela de bachiller
 - **Reportes**: Reportes de alumnos por carrera, reportes de notas con filtros y reportes individuales
 - **Exportación**: Exportación de reportes a formato CSV
 - **Dashboard**: Panel de control con estadísticas generales
+- **Ajustes de interfaz**: Creación de perfiles de demostración con roles Usuario y Administrador
+- **Idiomas**: Interfaz en español e inglés, con preferencia guardada en el navegador
 - **Seguridad**: Protección CSRF, validaciones en servidor y cliente, consultas SQL parametrizadas
-- **Interfaz Responsiva**: Diseño moderno con Bootstrap 5
+- **Interfaz Responsiva**: Tema oscuro morado y rojo adaptable a móvil y escritorio
+
+## Capturas de la Aplicación
+
+### Dashboard
+![Dashboard del sistema](docs/screenshots/dashboard.png)
+
+### Ajustes de cuentas
+![Administración de cuentas de demostración](docs/screenshots/ajustes-cuentas.png)
+
+### Ajustes de idioma
+![Selector de idioma español e inglés](docs/screenshots/ajustes-idioma.png)
+
+> Las cuentas creadas desde Ajustes son demostrativas y se guardan únicamente en el navegador; no habilitan acceso real.
 
 ## Tecnologías
 
@@ -222,6 +237,7 @@ sistema-academico/
 
 ### Dashboard
 - `GET /` - Dashboard principal
+- `GET /ajustes` - Preferencias de idioma y cuentas de demostración
 
 ### Alumnos
 - `GET /alumnos` - Listar alumnos
@@ -343,7 +359,7 @@ MAX_FILE_SIZE=2097152  # 2MB en bytes
 - Implementar API REST
 - Agregar pruebas unitarias
 - Implementar cacheo para consultas frecuentes
-- Agregar multilenguaje
+- Ampliar las traducciones a todas las secciones de la interfaz
 - Implementar notificaciones por email
 
 ## Diagrama Entidad-Relación

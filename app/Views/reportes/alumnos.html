@@ -10,7 +10,7 @@
                     <option value="">Todas las carreras</option>
                     <repeat group="{{ @carreras }}" value="{{ @carrera }}">
                         <option value="{{ @carrera.id_carrera }}" 
-                                <check if {{ @id_carrera }} == {{ @carrera.id_carrera }}>selected</check>>
+                                <check if="{{ @id_carrera == @carrera.id_carrera }}">selected</check>>
                             {{ @carrera.nombre }}
                         </option>
                     </repeat>
@@ -42,7 +42,7 @@
                     <repeat group="{{ @alumnos }}" value="{{ @alumno }}">
                         <tr>
                             <td>
-                                <check if {{ @alumno.foto_url }}>
+                                <check if="{{ @alumno.foto_url }}">
                                     <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno">
                                 <else>
                                     <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
@@ -52,11 +52,11 @@
                             </td>
                             <td>{{ @alumno.apellidos }}, {{ @alumno.nombres }}</td>
                             <td>{{ @alumno.nombre_carrera }}</td>
-                            <td>{{ @alumno.fecha_nacimiento|date:"d/m/Y" }}</td>
-                            <td>{{ @alumno.fecha_registro|date:"d/m/Y" }}</td>
+                            <td>{{ @alumno.fecha_nacimiento ? date('d/m/Y', strtotime(@alumno.fecha_nacimiento)) : '' }}</td>
+                            <td>{{ @alumno.fecha_registro ? date('d/m/Y', strtotime(@alumno.fecha_registro)) : '' }}</td>
                         </tr>
                     </repeat>
-                    <check if {{ @alumnos|count }} == 0>
+                    <check if="{{ count(@alumnos) == 0 }}">
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">No hay alumnos para mostrar</td>
                         </tr>

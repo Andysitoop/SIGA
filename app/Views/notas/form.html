@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><check if {{ @nota }}>Editar<else>Registrar</check> Nota</h1>
+    <h1 class="h2"><check if="{{ @nota }}">Editar<else>Registrar</check> Nota</h1>
     <a href="/notas/historial/{{ @alumno.id_alumno }}" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Volver
     </a>
@@ -10,7 +10,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <check if {{ @alumno.foto_url }}>
+                    <check if="{{ @alumno.foto_url }}">
                         <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno me-3">
                     <else>
                         <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white me-3">
@@ -29,7 +29,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="<check if {{ @nota }}>/notas/{{ @nota.id_nota }}/actualizar<else>/notas/guardar</check>" method="POST">
+        <form action="<check if="{{ @nota }}">/notas/{{ @nota.id_nota }}/actualizar<else>/notas/guardar</check>" method="POST">
             <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
             <input type="hidden" name="id_alumno" value="{{ @alumno.id_alumno }}">
             
@@ -41,7 +41,7 @@
                             <option value="">Seleccione un semestre</option>
                             <repeat group="{{ @semestres }}" value="{{ @semestre }}">
                                 <option value="{{ @semestre.id_semestre }}" 
-                                        <check if {{ @nota.id_semestre ?? @data.id_semestre }} == {{ @semestre.id_semestre }}>selected</check>>
+                                        <check if="{{ (@nota.id_semestre ?? @data.id_semestre) == @semestre.id_semestre }}">selected</check>>
                                     {{ @semestre.nombre }}
                                 </option>
                             </repeat>
@@ -56,7 +56,7 @@
                             <option value="">Seleccione una sección</option>
                             <repeat group="{{ @secciones }}" value="{{ @seccion }}">
                                 <option value="{{ @seccion.id_seccion }}" 
-                                        <check if {{ @nota.id_seccion ?? @data.id_seccion }} == {{ @seccion.id_seccion }}>selected</check>>
+                                        <check if="{{ (@nota.id_seccion ?? @data.id_seccion) == @seccion.id_seccion }}">selected</check>>
                                     {{ @seccion.nombre }}
                                 </option>
                             </repeat>
@@ -73,7 +73,7 @@
                             <option value="">Seleccione un curso</option>
                             <repeat group="{{ @cursos }}" value="{{ @curso }}">
                                 <option value="{{ @curso.id_curso }}" 
-                                        <check if {{ @nota.id_curso ?? @data.id_curso }} == {{ @curso.id_curso }}>selected</check>>
+                                        <check if="{{ (@nota.id_curso ?? @data.id_curso) == @curso.id_curso }}">selected</check>>
                                     {{ @curso.codigo }} - {{ @curso.nombre }}
                                 </option>
                             </repeat>

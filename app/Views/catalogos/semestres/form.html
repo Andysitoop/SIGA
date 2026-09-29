@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><check if {{ @semestre }}>Editar<else>Nuevo</check> Semestre</h1>
+    <h1 class="h2"><check if="{{ @semestre }}">Editar<else>Nuevo</check> Semestre</h1>
     <a href="/semestres" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Volver
     </a>
@@ -7,18 +7,18 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="<check if {{ @semestre }}>/semestres/{{ @semestre.id_semestre }}/actualizar<else>/semestres/guardar</check>" method="POST">
+        <form action="<check if="{{ @semestre }}">/semestres/{{ @semestre.id_semestre }}/actualizar<else>/semestres/guardar</check>" method="POST">
             <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
             
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre *</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" 
-                       value="{{ @semestre.nombre|esc ?? @data.nombre|esc }}" required>
+                       value="{{ (@semestre.nombre ?? @data.nombre)|esc }}" required>
             </div>
             
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="activo" name="activo" 
-                       <check if {{ @semestre.activo ?? @data.activo ?? true }}>checked</check>>
+                       <check if="{{ @semestre.activo ?? @data.activo ?? true }}">checked</check>>
                 <label class="form-check-label" for="activo">Activo</label>
             </div>
             

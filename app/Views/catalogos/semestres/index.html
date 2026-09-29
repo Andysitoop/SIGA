@@ -25,9 +25,9 @@
                         <tr>
                             <td>{{ @semestre.id_semestre }}</td>
                             <td>{{ @semestre.nombre }}</td>
-                            <td>{{ @semestre.fecha_registro|date:"d/m/Y H:i" }}</td>
+                            <td>{{ @semestre.fecha_registro ? date('d/m/Y H:i', strtotime(@semestre.fecha_registro)) : '' }}</td>
                             <td>
-                                <check if {{ @semestre.activo }}>
+                                <check if="{{ @semestre.activo }}">
                                     <span class="badge bg-success">Activo</span>
                                 <else>
                                     <span class="badge bg-secondary">Inactivo</span>
@@ -38,7 +38,7 @@
                                     <a href="/semestres/{{ @semestre.id_semestre }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if {{ @semestre.activo }}>
+                                    <check if="{{ @semestre.activo }}">
                                         <a href="/semestres/{{ @semestre.id_semestre }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
                                             <i class="bi bi-x-circle"></i>
                                         </a>
@@ -51,7 +51,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @semestres|count }} == 0>
+                    <check if="{{ count(@semestres) == 0 }}">
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">No hay semestres registrados</td>
                         </tr>

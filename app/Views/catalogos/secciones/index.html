@@ -25,9 +25,9 @@
                         <tr>
                             <td>{{ @seccion.id_seccion }}</td>
                             <td>{{ @seccion.nombre }}</td>
-                            <td>{{ @seccion.fecha_registro|date:"d/m/Y H:i" }}</td>
+                            <td>{{ @seccion.fecha_registro ? date('d/m/Y H:i', strtotime(@seccion.fecha_registro)) : '' }}</td>
                             <td>
-                                <check if {{ @seccion.activo }}>
+                                <check if="{{ @seccion.activo }}">
                                     <span class="badge bg-success">Activo</span>
                                 <else>
                                     <span class="badge bg-secondary">Inactivo</span>
@@ -38,7 +38,7 @@
                                     <a href="/secciones/{{ @seccion.id_seccion }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if {{ @seccion.activo }}>
+                                    <check if="{{ @seccion.activo }}">
                                         <a href="/secciones/{{ @seccion.id_seccion }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
                                             <i class="bi bi-x-circle"></i>
                                         </a>
@@ -51,7 +51,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @secciones|count }} == 0>
+                    <check if="{{ count(@secciones) == 0 }}">
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">No hay secciones registradas</td>
                         </tr>

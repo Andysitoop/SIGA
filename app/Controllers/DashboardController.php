@@ -42,7 +42,7 @@ class DashboardController
         $f3->set('ultimas_notas', $ultimasNotas);
         $f3->set('APP_NAME', $config['name']);
         $f3->set('title', 'Dashboard');
-        $f3->set('content', 'dashboard/index');
+        $f3->set('content', 'dashboard/index.html');
         
         echo \Template::instance()->render('layouts/main.html');
     }

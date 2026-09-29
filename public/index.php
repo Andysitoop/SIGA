@@ -30,6 +30,16 @@ $f3->set('APP_NAME', $appConfig['name']);
 // Configurar directorio de plantillas
 $f3->set('UPLOADS', __DIR__ . '/uploads/');
 
+// ===== RUTAS DE AUTENTICACIÓN =====
+
+$f3->route('GET /login', 'App\Controllers\LoginController->index');
+$f3->route('POST /login/authenticate', 'App\Controllers\LoginController->authenticate');
+$f3->route('GET /logout', 'App\Controllers\LoginController->logout');
+
+// ===== CONFIGURACIÓN DE INTERFAZ =====
+
+$f3->route('GET /ajustes', 'App\\Controllers\\AjustesController->index');
+
 // ===== RUTAS DEL DASHBOARD =====
 
 $f3->route('GET /', 'App\Controllers\DashboardController->index');

@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<check if {{ @query }}>
+<check if="{{ @query }}">
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -37,7 +37,7 @@
                         <repeat group="{{ @alumnos }}" value="{{ @alumno }}">
                             <tr>
                                 <td>
-                                    <check if {{ @alumno.fotografia }}>
+                                    <check if="{{ @alumno.fotografia }}">
                                         <img src="{{ @alumno.fotografia }}" alt="Foto" class="foto-alumno">
                                     <else>
                                         <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
@@ -59,7 +59,7 @@
                                 </td>
                             </tr>
                         </repeat>
-                        <check if {{ @alumnos|count }} == 0>
+                        <check if="{{ count(@alumnos) == 0 }}">
                             <tr>
                                 <td colspan="4" class="text-center text-muted py-4">No se encontraron resultados para "{{ @query }}"</td>
                             </tr>

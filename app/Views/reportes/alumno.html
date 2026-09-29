@@ -14,7 +14,7 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body text-center">
-                <check if {{ @alumno.foto_url }}>
+                <check if="{{ @alumno.foto_url }}">
                     <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno-lg mb-3">
                 <else>
                     <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-3">
@@ -34,16 +34,16 @@
                 <table class="table table-sm">
                     <tr>
                         <th class="w-50">Fecha de Nacimiento:</th>
-                        <td>{{ @alumno.fecha_nacimiento|date:"d/m/Y" }}</td>
+                        <td>{{ @alumno.fecha_nacimiento ? date('d/m/Y', strtotime(@alumno.fecha_nacimiento)) : '' }}</td>
                     </tr>
                     <tr>
                         <th>Fecha de Registro:</th>
-                        <td>{{ @alumno.fecha_registro|date:"d/m/Y H:i" }}</td>
+                        <td>{{ @alumno.fecha_registro ? date('d/m/Y H:i', strtotime(@alumno.fecha_registro)) : '' }}</td>
                     </tr>
                     <tr>
                         <th>Estado:</th>
                         <td>
-                            <check if {{ @alumno.activo }}>
+                            <check if="{{ @alumno.activo }}">
                                 <span class="badge bg-success">Activo</span>
                             <else>
                                 <span class="badge bg-secondary">Inactivo</span>
@@ -122,10 +122,10 @@
                                     {{ @nota.aprobado ? 'Aprobado' : 'Reprobado' }}
                                 </span>
                             </td>
-                            <td>{{ @nota.fecha_registro|date:"d/m/Y" }}</td>
+                            <td>{{ @nota.fecha_registro ? date('d/m/Y', strtotime(@nota.fecha_registro)) : '' }}</td>
                         </tr>
                     </repeat>
-                    <check if {{ @notas|count }} == 0>
+                    <check if="{{ count(@notas) == 0 }}">
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">No hay notas registradas</td>
                         </tr>

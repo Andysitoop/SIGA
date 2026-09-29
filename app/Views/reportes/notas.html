@@ -13,7 +13,7 @@
                     <option value="">Todas las carreras</option>
                     <repeat group="{{ @carreras }}" value="{{ @carrera }}">
                         <option value="{{ @carrera.id_carrera }}" 
-                                <check if {{ @id_carrera }} == {{ @carrera.id_carrera }}>selected</check>>
+                                <check if="{{ @id_carrera == @carrera.id_carrera }}">selected</check>>
                             {{ @carrera.nombre }}
                         </option>
                     </repeat>
@@ -24,7 +24,7 @@
                     <option value="">Todos los cursos</option>
                     <repeat group="{{ @cursos }}" value="{{ @curso }}">
                         <option value="{{ @curso.id_curso }}" 
-                                <check if {{ @id_curso }} == {{ @curso.id_curso }}>selected</check>>
+                                <check if="{{ @id_curso == @curso.id_curso }}">selected</check>>
                             {{ @curso.codigo }} - {{ @curso.nombre }}
                         </option>
                     </repeat>
@@ -35,7 +35,7 @@
                     <option value="">Todas las secciones</option>
                     <repeat group="{{ @secciones }}" value="{{ @seccion }}">
                         <option value="{{ @seccion.id_seccion }}" 
-                                <check if {{ @id_seccion }} == {{ @seccion.id_seccion }}>selected</check>>
+                                <check if="{{ @id_seccion == @seccion.id_seccion }}">selected</check>>
                             {{ @seccion.nombre }}
                         </option>
                     </repeat>
@@ -46,7 +46,7 @@
                     <option value="">Todos los semestres</option>
                     <repeat group="{{ @semestres }}" value="{{ @semestre }}">
                         <option value="{{ @semestre.id_semestre }}" 
-                                <check if {{ @id_semestre }} == {{ @semestre.id_semestre }}>selected</check>>
+                                <check if="{{ @id_semestre == @semestre.id_semestre }}">selected</check>>
                             {{ @semestre.nombre }}
                         </option>
                     </repeat>
@@ -92,7 +92,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @notas|count }} == 0>
+                    <check if="{{ count(@notas) == 0 }}">
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">No hay notas para mostrar</td>
                         </tr>

@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2"><check if {{ @alumno }}>Editar<else>Nuevo</check> Alumno</h1>
+    <h1 class="h2"><check if="{{ @alumno }}">Editar<else>Nuevo</check> Alumno</h1>
     <a href="/alumnos" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Volver
     </a>
@@ -7,7 +7,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="<check if {{ @alumno }}>/alumnos/{{ @alumno.id_alumno }}/actualizar<else>/alumnos/guardar</check>" method="POST" enctype="multipart/form-data">
+        <form action="<check if="{{ @alumno }}">/alumnos/{{ @alumno.id_alumno }}/actualizar<else>/alumnos/guardar</check>" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
             
             <div class="row">
@@ -15,13 +15,13 @@
                     <div class="mb-3">
                         <label for="nombres" class="form-label">Nombres *</label>
                         <input type="text" class="form-control" id="nombres" name="nombres" 
-                               value="{{ @alumno.nombres|esc ?? @data.nombres|esc }}" required>
+                               value="{{ (@alumno.nombres ?? @data.nombres)|esc }}" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="apellidos" class="form-label">Apellidos *</label>
                         <input type="text" class="form-control" id="apellidos" name="apellidos" 
-                               value="{{ @alumno.apellidos|esc ?? @data.apellidos|esc }}" required>
+                               value="{{ (@alumno.apellidos ?? @data.apellidos)|esc }}" required>
                     </div>
                     
                     <div class="mb-3">
@@ -36,7 +36,7 @@
                             <option value="">Seleccione una carrera</option>
                             <repeat group="{{ @carreras }}" value="{{ @carrera }}">
                                 <option value="{{ @carrera.id_carrera }}" 
-                                        <check if {{ @alumno.id_carrera ?? @data.id_carrera }} == {{ @carrera.id_carrera }}>selected</check>>
+                                        <check if="{{ (@alumno.id_carrera ?? @data.id_carrera) == @carrera.id_carrera }}">selected</check>>
                                     {{ @carrera.nombre }}
                                 </option>
                             </repeat>
@@ -54,7 +54,7 @@
                     </div>
                     
                     <div class="mb-3 text-center">
-                        <check if {{ @alumno.foto_url }}>
+                        <check if="{{ @alumno.foto_url }}">
                             <img src="{{ @alumno.foto_url }}" alt="Foto actual" id="preview-foto" class="foto-alumno-lg mb-2">
                         <else>
                             <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-2" id="preview-foto">

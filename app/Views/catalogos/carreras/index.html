@@ -25,9 +25,9 @@
                         <tr>
                             <td>{{ @carrera.id_carrera }}</td>
                             <td>{{ @carrera.nombre }}</td>
-                            <td>{{ @carrera.fecha_registro|date:"d/m/Y H:i" }}</td>
+                            <td>{{ @carrera.fecha_registro ? date('d/m/Y H:i', strtotime(@carrera.fecha_registro)) : '' }}</td>
                             <td>
-                                <check if {{ @carrera.activo }}>
+                                <check if="{{ @carrera.activo }}">
                                     <span class="badge bg-success">Activo</span>
                                 <else>
                                     <span class="badge bg-secondary">Inactivo</span>
@@ -38,7 +38,7 @@
                                     <a href="/carreras/{{ @carrera.id_carrera }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if {{ @carrera.activo }}>
+                                    <check if="{{ @carrera.activo }}">
                                         <a href="/carreras/{{ @carrera.id_carrera }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
                                             <i class="bi bi-x-circle"></i>
                                         </a>
@@ -51,7 +51,7 @@
                             </td>
                         </tr>
                     </repeat>
-                    <check if {{ @carreras|count }} == 0>
+                    <check if="{{ count(@carreras) == 0 }}">
                         <tr>
                             <td colspan="5" class="text-center text-muted py-4">No hay carreras registradas</td>
                         </tr>
