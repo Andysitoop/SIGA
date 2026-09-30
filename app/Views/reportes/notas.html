@@ -1,8 +1,13 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Reporte de Notas</h1>
-    <a href="/reportes/notas/exportar-csv?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}" class="btn btn-success">
-        <i class="bi bi-file-earmark-excel me-1"></i> Exportar CSV
-    </a>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="/reportes/notas/exportar-csv?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}" class="btn btn-outline-success me-2">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i> Exportar CSV
+        </a>
+        <a href="/reportes/notas/exportar-doc?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-word me-1"></i> Exportar DOC
+        </a>
+    </div>
 </div>
 
 <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Las notas, cursos, semestres y secciones son datos de demostración.</div>
