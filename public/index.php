@@ -110,6 +110,7 @@ $f3->route('GET /secciones/@id/activar', 'App\Controllers\CatalogoController->se
 // ===== RUTAS DE REPORTES =====
 
 $f3->route('GET /reportes/alumnos', 'App\Controllers\ReporteController->alumnos');
+$f3->route('GET /reportes/alumnos/exportar-csv', 'App\Controllers\ReporteController->exportarAlumnosCsv');
 $f3->route('GET /reportes/alumnos/exportar-doc', 'App\Controllers\ReporteController->exportarAlumnosDoc');
 $f3->route('GET /reportes/notas', 'App\Controllers\ReporteController->notas');
 $f3->route('GET /reportes/alumno/@id', 'App\Controllers\ReporteController->alumno');

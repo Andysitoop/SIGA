@@ -1,0 +1,83 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <div>
+        <h1 class="h2">Reporte de Alumnos por Carrera</h1>
+        <p class="text-muted mb-0"><?= ($alumnos_count) ?> alumnos de ejemplo en este reporte.</p>
+    </div>
+    <a href="/reportes/alumnos/exportar-csv?id_carrera=<?= ($id_carrera) ?>" class="btn btn-success">
+        <i class="bi bi-download me-1"></i> Descargar CSV
+    </a>
+</div>
+
+<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Reporte de demostración con alumnos y carreras de ejemplo.</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form action="/reportes/alumnos" method="GET" class="row g-3">
+            <div class="col-md-10">
+                <select class="form-select" name="id_carrera">
+                    <option value="">Todas las carreras</option>
+                    <?php foreach (($carreras?:[]) as $carrera): ?>
+                        <option value="<?= ($carrera['id_carrera']) ?>" 
+                                <?php if ($id_carrera == $carrera['id_carrera']): ?>selected<?php endif; ?>>
+                            <?= ($carrera['nombre'])."
+" ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-filter"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nombre Completo</th>
+                        <th>Carrera</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Fecha Registro</th>
+                        <th class="text-end">Historial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach (($alumnos?:[]) as $alumno): ?>
+                        <tr>
+                            <td>
+                                <?php if ($alumno['foto_url']): ?>
+                                    <img src="<?= ($alumno['foto_url']) ?>" alt="Foto" class="foto-alumno">
+                                <else>
+                                    <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= ($alumno['apellidos']) ?>, <?= ($alumno['nombres']) ?></td>
+                            <td><?= ($alumno['nombre_carrera']) ?></td>
+                            <td><?= ($alumno['fecha_nacimiento'] ? date('d/m/Y', strtotime($alumno['fecha_nacimiento'])) : '') ?></td>
+                            <td><?= ($alumno['fecha_registro'] ? date('d/m/Y', strtotime($alumno['fecha_registro'])) : '') ?></td>
+                            <td class="text-end">
+                                <a href="/reportes/alumno/<?= ($alumno['id_alumno']) ?>" class="btn btn-sm btn-outline-primary" aria-label="Ver historial de <?= ($alumno['nombres']) ?> <?= ($alumno['apellidos']) ?>">
+                                    <i class="bi bi-journal-text me-1"></i> Ver historial
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    <?php if (count($alumnos) == 0): ?>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No hay alumnos para mostrar</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

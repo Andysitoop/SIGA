@@ -10,7 +10,7 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
 return [
-    'name' => $_ENV['APP_NAME'] ?? 'Sistema Académico',
+    'name' => $_ENV['APP_NAME'] ?? 'SIGA',
     'env' => $_ENV['APP_ENV'] ?? 'development',
     'debug' => filter_var($_ENV['APP_DEBUG'] ?? 'true', FILTER_VALIDATE_BOOLEAN),
     'url' => $_ENV['APP_URL'] ?? 'http://localhost:8000',

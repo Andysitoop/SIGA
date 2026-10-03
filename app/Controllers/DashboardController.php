@@ -19,6 +19,12 @@ class DashboardController
     {
         if (!isset($_SESSION)) session_start();
         
+        // Verificar autenticación
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            header('Location: /login');
+            exit;
+        }
+        
         $f3 = \Base::instance();
         $config = require __DIR__ . '/../../config/app.php';
         

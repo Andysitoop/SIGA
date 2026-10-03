@@ -22,6 +22,11 @@ class NotaController
     {
         if (!isset($_SESSION)) session_start();
         
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            header('Location: /login');
+            exit;
+        }
+        
         $f3 = \Base::instance();
         $notas = Nota::getLatest(20);
         
@@ -38,6 +43,11 @@ class NotaController
     public function buscar()
     {
         if (!isset($_SESSION)) session_start();
+        
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            header('Location: /login');
+            exit;
+        }
         
         $f3 = \Base::instance();
         $query = $f3->get('GET.q') ?? '';

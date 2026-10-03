@@ -20,6 +20,11 @@ class AlumnoController
     {
         if (!isset($_SESSION)) session_start();
         
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            header('Location: /login');
+            exit;
+        }
+        
         $f3 = \Base::instance();
         $page = $f3->get('GET.page') ?? 1;
         $limit = 20;
@@ -44,6 +49,11 @@ class AlumnoController
     public function buscar()
     {
         if (!isset($_SESSION)) session_start();
+        
+        if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+            header('Location: /login');
+            exit;
+        }
         
         $f3 = \Base::instance();
         $query = $f3->get('GET.q') ?? '';

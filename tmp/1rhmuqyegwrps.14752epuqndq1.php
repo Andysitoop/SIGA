@@ -1,0 +1,77 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><?php if ($alumno): ?>Editar<else>Nuevo<?php endif; ?> Alumno</h1>
+    <a href="/alumnos" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form action="<?php if ($alumno): ?>/alumnos/<?= ($alumno['id_alumno']) ?>/actualizar<else>/alumnos/guardar<?php endif; ?>" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= ($csrf_token) ?>">
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label for="nombres" class="form-label">Nombres *</label>
+                        <input type="text" class="form-control" id="nombres" name="nombres" 
+                               value="<?= ($this->esc(($alumno['nombres'] ?? $data['nombres']))) ?>" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="apellidos" class="form-label">Apellidos *</label>
+                        <input type="text" class="form-control" id="apellidos" name="apellidos" 
+                               value="<?= ($this->esc(($alumno['apellidos'] ?? $data['apellidos']))) ?>" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento *</label>
+                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                               value="<?= ($alumno['fecha_nacimiento'] ?? $data['fecha_nacimiento']) ?>" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="id_carrera" class="form-label">Carrera *</label>
+                        <select class="form-select" id="id_carrera" name="id_carrera" required>
+                            <option value="">Seleccione una carrera</option>
+                            <?php foreach (($carreras?:[]) as $carrera): ?>
+                                <option value="<?= ($carrera['id_carrera']) ?>" 
+                                        <?php if (($alumno['id_carrera'] ?? $data['id_carrera']) == $carrera['id_carrera']): ?>selected<?php endif; ?>>
+                                    <?= ($carrera['nombre'])."
+" ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="fotografia" class="form-label">Fotografía</label>
+                        <input type="file" class="form-control" id="fotografia" name="fotografia" 
+                               accept="image/jpeg,image/jpg,image/png"
+                               onchange="previewImage(this, 'preview-foto')">
+                        <div class="form-text">Formatos: JPG, JPEG, PNG. Máximo 2MB</div>
+                    </div>
+                    
+                    <div class="mb-3 text-center">
+                        <?php if ($alumno['foto_url']): ?>
+                            <img src="<?= ($alumno['foto_url']) ?>" alt="Foto actual" id="preview-foto" class="foto-alumno-lg mb-2">
+                        <else>
+                            <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-2" id="preview-foto">
+                                <i class="bi bi-person fs-1"></i>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end gap-2">
+                <a href="/alumnos" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
