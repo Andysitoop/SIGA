@@ -10,8 +10,24 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
+if (($_SESSION['logged_in'] ?? false) === true
+    && (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']))) {
+    $_SESSION = [];
+    session_regenerate_id(true);
+}
+
 // Cargar dependencias de Composer
 require_once __DIR__ . '/../vendor/autoload.php';
+
+if (($_SESSION['logged_in'] ?? false) === true) {
+    $user = \App\Models\Usuario::getById((int)$_SESSION['user_id']);
+    if (!$user || (int)$user['activo'] !== 1) {
+        $_SESSION = [];
+        session_regenerate_id(true);
+    } else {
+        $_SESSION['user_role'] = $user['rol'];
+    }
+}
 
 // Cargar configuración
 $appConfig = require __DIR__ . '/../config/app.php';
@@ -39,6 +55,8 @@ $f3->route('GET /logout', 'App\Controllers\LoginController->logout');
 // ===== CONFIGURACIÓN DE INTERFAZ =====
 
 $f3->route('GET /ajustes', 'App\\Controllers\\AjustesController->index');
+$f3->route('POST /ajustes/usuarios', 'App\\Controllers\\AjustesController->createUser');
+$f3->route('POST /ajustes/usuarios/@id/estado/@estado', 'App\\Controllers\\AjustesController->setUserStatus');
 
 // ===== RUTAS DEL DASHBOARD =====
 

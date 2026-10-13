@@ -18,7 +18,7 @@ class Semestre
         if ($onlyActive) {
             $sql .= " WHERE activo = 1";
         }
-        $sql .= " ORDER BY nombre ASC";
+        $sql .= " ORDER BY id_semestre ASC";
         
         return Database::query($sql);
     }

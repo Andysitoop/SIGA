@@ -2,15 +2,17 @@
 
 Sistema web para gestión de alumnos, cursos y notas de una escuela de bachillerato. Permite registrar alumnos, administrar catálogos (carreras, cursos, semestres, secciones), registrar notas, consultar historial académico y generar reportes.
 
+Consulta la guía completa en [documentacion.md](documentacion.md).
+
 ## Características
 
 - **Gestión de Catálogos**: CRUD completo para carreras, cursos, semestres y secciones
 - **Gestión de Alumnos**: Registro con fotografía, edición, búsqueda y desactivación
 - **Gestión de Notas**: Registro de notas con validaciones, historial académico y estadísticas
 - **Reportes**: Reportes de alumnos por carrera, reportes de notas con filtros y reportes individuales
-- **Exportación**: Exportación de reportes a formato CSV
+- **Exportación**: Exportación de reportes a CSV y documento compatible con Word
 - **Dashboard**: Panel de control con estadísticas generales
-- **Ajustes de interfaz**: Creación de perfiles de demostración con roles Usuario y Administrador
+- **Usuarios**: Inicio de sesión con contraseñas seguras, roles y administración de cuentas
 - **Idiomas**: Interfaz en español e inglés, con preferencia guardada en el navegador
 - **Seguridad**: Protección CSRF, validaciones en servidor y cliente, consultas SQL parametrizadas
 - **Interfaz Responsiva**: Tema oscuro morado y rojo adaptable a móvil y escritorio
@@ -21,18 +23,18 @@ Sistema web para gestión de alumnos, cursos y notas de una escuela de bachiller
 ![Dashboard del sistema](docs/screenshots/dashboard.png)
 
 ### Ajustes de cuentas
-![Administración de cuentas de demostración](docs/screenshots/ajustes-cuentas.png)
+![Administración de cuentas](docs/screenshots/ajustes-cuentas.png)
 
 ### Ajustes de idioma
 ![Selector de idioma español e inglés](docs/screenshots/ajustes-idioma.png)
 
-> Las cuentas creadas desde Ajustes son demostrativas y se guardan únicamente en el navegador; no habilitan acceso real.
+> El primer administrador se crea desde la terminal con `php create-admin.php`. Las cuentas posteriores se administran desde Ajustes.
 
 ## Tecnologías
 
 - **PHP 8.1+**
 - **Fat-Free Framework 3.x**
-- **MySQL 8**
+- **MySQL 8.0.16+**
 - **Composer**
 - **HTML5, CSS3, JavaScript**
 - **Bootstrap 5**
@@ -40,7 +42,7 @@ Sistema web para gestión de alumnos, cursos y notas de una escuela de bachiller
 ## Requisitos del Sistema
 
 - PHP 8.1 o superior
-- MySQL 8.0 o superior
+- MySQL 8.0.16 o superior
 - Composer
 - Servidor web (Apache, Nginx o servidor PHP integrado)
 - Extensiones PHP: pdo_mysql, mbstring, fileinfo
@@ -119,8 +121,8 @@ Editar el archivo `.env` con sus credenciales de base de datos:
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=sistema_academico
-DB_USER=root
-DB_PASS=tu_contraseña
+DB_USER=sistema_app
+DB_PASS=CambiaEstaClave_2026!
 
 APP_NAME=Sistema Académico
 APP_ENV=development
@@ -143,14 +145,28 @@ Iniciar sesión en MySQL:
 mysql -u root -p
 ```
 
-Ejecutar el script SQL:
+Ejecutar el script SQL final, que crea y carga la base de datos y el usuario `sistema_app`:
 ```bash
-mysql -u root -p < sql/sistema_academico.sql
+mysql -u root -p < sql/sistema_academico_final.sql
 ```
+
+La contraseña de `DB_PASS` debe coincidir con la definida para `sistema_app` en el script SQL. Cambia el valor de ejemplo en ambos lugares antes de instalar en un entorno compartido.
+
+Si la base ya existe, no vuelvas a importar `sistema_academico_final.sql`, porque ese script recrea la base. Aplica únicamente la tabla de cuentas:
+```bash
+mysql -u root -p sistema_academico < sql/migrate_users.sql
+```
+
+Crear el primer administrador. El comando solicita nombre, correo y contraseña (mínimo 12 caracteres); la contraseña se almacena con `password_hash`:
+```bash
+php create-admin.php
+```
+
+Después inicia sesión con ese correo y contraseña. Los administradores pueden crear, activar y desactivar cuentas desde **Ajustes**.
 
 O ejecutar manualmente desde el cliente MySQL:
 ```sql
-source sql/sistema_academico.sql
+source sql/sistema_academico_final.sql
 ```
 
 ### 8. Configurar Permisos de Escritura
@@ -201,7 +217,8 @@ sistema-academico/
 │   │   ├── Carrera.php
 │   │   ├── Curso.php
 │   │   ├── Semestre.php
-│   │   └── Seccion.php
+│   │   ├── Seccion.php
+│   │   └── Usuario.php
 │   ├── Views/                # Vistas (plantillas HTML)
 │   │   ├── layouts/
 │   │   │   └── main.html
@@ -225,7 +242,9 @@ sistema-academico/
 │   ├── images/              # Imágenes estáticas
 │   └── uploads/             # Fotografías de alumnos
 ├── sql/                     # Scripts de base de datos
-│   └── sistema_academico.sql
+│   ├── sistema_academico_final.sql
+│   └── migrate_users.sql     # Migración no destructiva para usuarios
+├── create-admin.php         # Aprovisionar el primer administrador
 ├── vendor/                  # Dependencias Composer
 ├── composer.json
 ├── .env.example
@@ -237,20 +256,18 @@ sistema-academico/
 
 ### Dashboard
 - `GET /` - Dashboard principal
-- `GET /ajustes` - Preferencias de idioma y cuentas de demostración
+- `GET /ajustes` - Preferencias de idioma y administración de cuentas (administradores)
 
-### Informes de demostración
-- `GET /reportes/alumnos` - Consulta los seis alumnos precargados y filtra por carrera
+### Reportes
+- `GET /reportes/alumnos` - Consulta alumnos de la base de datos y filtra por carrera
 - `GET /reportes/alumnos/exportar-csv` - Descarga alumnos con resumen y fechas legibles, respetando el filtro de carrera
 - `GET /reportes/alumnos/exportar-doc` - Descarga el reporte de alumnos con formato compatible con Word
-- `GET /reportes/notas` - Filtra las calificaciones demo por carrera, curso, sección y semestre
+- `GET /reportes/notas` - Filtra calificaciones por carrera, curso, sección y semestre
 - `GET /reportes/notas/exportar-csv` - Descarga las notas con resumen, filtros seleccionados y estados
 - `GET /reportes/notas/exportar-doc` - Descarga las notas en un documento compatible con Word
 - `GET /reportes/alumno/{id}` - Consulta los datos y el historial académico de un alumno
 - `GET /reportes/alumno/{id}/exportar-csv` - Descarga el historial y las estadísticas del alumno
 - `GET /reportes/alumno/{id}/exportar-doc` - Descarga el historial y las estadísticas en formato compatible con Word
-
-Los informes de demostración usan seis alumnos, tres carreras, cuatro cursos, dos semestres, tres secciones y 18 notas precargadas en código; no necesitan conectarse a MySQL.
 
 ### Alumnos
 - `GET /alumnos` - Listar alumnos
@@ -327,8 +344,9 @@ El script SQL incluye datos de prueba:
 - 20 cursos
 - 6 semestres
 - 5 secciones
-- 5 alumnos
-- 21 notas
+- 31 alumnos
+- 21 notas iniciales más notas de demostración generadas desde el pensum
+- 1 tabla de usuarios; el administrador inicial se crea por CLI
 
 ## Configuración
 
@@ -353,7 +371,7 @@ MAX_FILE_SIZE=2097152  # 2MB en bytes
 ## Seguridad
 
 - Consultas SQL parametrizadas para prevenir SQL Injection
-- Protección CSRF en todos los formularios POST
+- Protección CSRF en los formularios de autenticación y administración de cuentas
 - Validación de tipos MIME y extensiones de archivos
 - Generación de nombres únicos para archivos subidos
 - Escapado de salida HTML
@@ -363,13 +381,13 @@ MAX_FILE_SIZE=2097152  # 2MB en bytes
 
 ## Problemas Conocidos
 
-- No se ha implementado autenticación de usuarios
+- La comprobación de sesión no está centralizada en todas las rutas; revisarla antes de publicar el sistema
 - La exportación a PDF requiere una librería adicional (no implementada)
 - No hay sistema de logs de auditoría
 
 ## Mejoras Futuras
 
-- Implementar sistema de autenticación y autorización
+- Centralizar autorización y convertir acciones académicas de activación/desactivación a POST con CSRF
 - Agregar exportación a PDF
 - Implementar sistema de logs
 - Agregar gráficos estadísticos en el dashboard

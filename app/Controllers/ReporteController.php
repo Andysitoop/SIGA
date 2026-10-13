@@ -54,7 +54,8 @@ class ReporteController
         $f3->set('id_curso', $idCurso ?? '');
         $f3->set('id_seccion', $idSeccion ?? '');
         $f3->set('id_semestre', $idSemestre ?? '');
-        $f3->set('nota_minima', 60);
+        $config = require __DIR__ . '/../../config/app.php';
+        $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Reporte de Notas');
         $f3->set('content', 'reportes/notas.html');
         
@@ -84,7 +85,7 @@ class ReporteController
         $f3->set('alumno', $alumno);
         $f3->set('notas', $notas);
         $f3->set('stats', $stats);
-        $f3->set('nota_minima', 60);
+        $f3->set('nota_minima', (require __DIR__ . '/../../config/app.php')['nota_minima_aprobacion']);
         $f3->set('title', 'Reporte Individual del Alumno');
         $f3->set('content', 'reportes/alumno.html');
         
@@ -352,7 +353,7 @@ class ReporteController
         }
 
         foreach ($items as $item) {
-            if ($item[$idKey] === $id) {
+            if ((int)$item[$idKey] === $id) {
                 return $item[$labelKey];
             }
         }

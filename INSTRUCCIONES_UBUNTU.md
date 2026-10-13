@@ -56,8 +56,8 @@ Editar con tus credenciales:
 DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=sistema_academico
-DB_USER=root
-DB_PASS=tu_contraseña_mysql
+DB_USER=sistema_app
+DB_PASS=CambiaEstaClave_2026!
 
 APP_NAME=Sistema Académico
 APP_ENV=development
@@ -76,7 +76,7 @@ PAGINATION_LIMIT=20
 ## 7. Crear Base de Datos
 
 ```bash
-sudo mysql -u root -p < sql/sistema_academico.sql
+sudo mysql -u root -p < sql/sistema_academico_final.sql
 ```
 
 O desde el cliente MySQL:
@@ -84,25 +84,43 @@ O desde el cliente MySQL:
 sudo mysql -u root -p
 ```
 ```sql
-source /mnt/c/Users/terra/CascadeProjects/sistema-academico/sql/sistema_academico.sql
+source /mnt/c/Users/terra/CascadeProjects/sistema-academico/sql/sistema_academico_final.sql
 exit
 ```
 
-## 8. Configurar Permisos
+La contraseña de `DB_PASS` debe coincidir con la definida para `sistema_app` en `sql/sistema_academico_final.sql`. Cambia el valor de ejemplo en ambos lugares antes de instalar en un entorno compartido.
+
+Si la base ya existe, no vuelvas a importar el script final porque elimina y recrea la base. Actualízala sin perder registros existentes:
+
+```bash
+sudo mysql -u root -p sistema_academico < sql/migrate_users.sql
+```
+
+## 8. Crear el primer administrador
+
+Desde la raíz del proyecto, ejecuta el provisionador. Solicita nombre, correo y una contraseña de al menos 12 caracteres:
+
+```bash
+php create-admin.php
+```
+
+La contraseña se guarda con `password_hash()`. Después inicia sesión con ese correo; la administración de cuentas está disponible en Ajustes.
+
+## 9. Configurar Permisos
 
 ```bash
 chmod -R 755 public/uploads
 chmod -R 755 tmp
 ```
 
-## 9. Ejecutar el Servidor
+## 10. Ejecutar el Servidor
 
 ```bash
 cd public
 php -S localhost:8000
 ```
 
-## 10. Acceder al Sistema
+## 11. Acceder al Sistema
 
 Abrir el navegador en:
 ```

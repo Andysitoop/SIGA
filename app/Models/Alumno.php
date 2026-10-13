@@ -161,4 +161,24 @@ class Alumno
         
         return Database::query($sql, [$idCarrera]);
     }
+
+    /**
+     * Obtiene alumnos activos para reportes, opcionalmente filtrados por carrera.
+     */
+    public static function getForReport(?int $idCarrera = null): array
+    {
+        $sql = "SELECT a.*, c.nombre as nombre_carrera
+                FROM alumnos a
+                INNER JOIN carreras c ON a.id_carrera = c.id_carrera
+                WHERE a.activo = 1";
+        $params = [];
+
+        if ($idCarrera !== null) {
+            $sql .= " AND a.id_carrera = ?";
+            $params[] = $idCarrera;
+        }
+
+        $sql .= " ORDER BY a.apellidos ASC, a.nombres ASC";
+        return Database::query($sql, $params);
+    }
 }

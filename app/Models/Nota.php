@@ -29,7 +29,7 @@ class Nota
             $sql .= " AND n.activo = 1";
         }
         
-        $sql .= " ORDER BY s.nombre ASC, c.codigo ASC";
+        $sql .= " ORDER BY n.id_semestre ASC, c.codigo ASC";
         
         return Database::query($sql, [$idAlumno]);
     }
@@ -190,7 +190,7 @@ class Nota
             $params[] = $idSemestre;
         }
         
-        $sql .= " ORDER BY car.nombre ASC, a.apellidos ASC, a.nombres ASC, s.nombre ASC, c.codigo ASC";
+        $sql .= " ORDER BY car.nombre ASC, a.apellidos ASC, a.nombres ASC, n.id_semestre ASC, c.codigo ASC";
         
         return Database::query($sql, $params);
     }
