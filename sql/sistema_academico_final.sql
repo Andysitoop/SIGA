@@ -391,6 +391,7 @@ DROP TEMPORARY TABLE tmp_plan;
 --   DB_PASS=la_misma_contraseña
 -- ---------------------------------------------------------------------
 CREATE USER IF NOT EXISTS 'sistema_app'@'localhost' IDENTIFIED BY 'CambiaEstaClave_2026!';
+ALTER USER 'sistema_app'@'localhost' IDENTIFIED BY 'CambiaEstaClave_2026!';
 GRANT SELECT, INSERT, UPDATE ON sistema_academico.* TO 'sistema_app'@'localhost';
 FLUSH PRIVILEGES;
 

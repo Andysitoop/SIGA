@@ -61,9 +61,9 @@ La base se llama `sistema_academico` y usa `utf8mb4`. Las tablas principales son
 
 Las relaciones de alumnos y notas usan claves foráneas con `ON DELETE RESTRICT`. Los registros académicos se desactivan mediante `activo`, no se eliminan físicamente. El esquema valida los estados y el rango de notas; no permite notas fuera de 0 a 100.
 
-El script `sql/sistema_academico_final.sql` incluye datos iniciales y crea el usuario MySQL `sistema_app`. **Este script elimina y vuelve a crear la base de datos**; úsalo solo para una instalación nueva o cuando aceptes perder los datos actuales. El script `sql/sistema_academico.sql` es el esquema anterior; se recomienda el script final.
+El script `sql/sistema_academico_final.sql` incluye datos iniciales y crea o actualiza el usuario MySQL `sistema_app`. **Este script elimina y vuelve a crear la base de datos**; úsalo solo para una instalación nueva o cuando aceptes perder los datos actuales.
 
-Para una base ya existente, aplica `sql/migrate_users.sql`, que solo crea la tabla `usuarios` si aún no existe.
+Para una base ya existente, aplica `sql/migrate_users.sql`. Crea `usuarios` si no existe y sincroniza el usuario MySQL `sistema_app` con los permisos de la aplicación. Si cambias la contraseña del ejemplo, actualízala en este archivo y en `.env`.
 
 ## 6. Instalación
 
@@ -114,7 +114,7 @@ sudo mysql -u root -p sistema_academico < sql/migrate_users.sql
 php create-admin.php
 ```
 
-El usuario de MySQL usado por PHP necesita poder leer, insertar y actualizar. El script final concede esos permisos a `sistema_app`; la migración de la tabla se ejecuta con una cuenta administrativa de MySQL.
+El usuario de MySQL usado por PHP necesita poder leer, insertar y actualizar. El script final y la migración conceden esos permisos a `sistema_app`; la migración se ejecuta con una cuenta administrativa de MySQL.
 
 ### Variables de entorno
 

@@ -13,3 +13,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     CONSTRAINT chk_usuarios_activo CHECK (activo IN (0,1)),
     CONSTRAINT chk_usuarios_nombre CHECK (CHAR_LENGTH(TRIM(nombre)) > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'sistema_app'@'localhost' IDENTIFIED BY 'CambiaEstaClave_2026!';
+ALTER USER 'sistema_app'@'localhost' IDENTIFIED BY 'CambiaEstaClave_2026!';
+GRANT SELECT, INSERT, UPDATE ON sistema_academico.* TO 'sistema_app'@'localhost';
+FLUSH PRIVILEGES;
