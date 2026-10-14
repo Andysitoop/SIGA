@@ -7,18 +7,30 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="<?php if ($carrera): ?>/carreras/<?= ($carrera['id_carrera']) ?>/actualizar<else>/carreras/guardar<?php endif; ?>" method="POST">
+        <form action="<?= ($form_action) ?>" method="POST">
             <input type="hidden" name="csrf_token" value="<?= ($csrf_token) ?>">
             
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre *</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" 
-                       value="<?= ($this->esc(($carrera['nombre'] ?? $data['nombre']))) ?>" required>
+                       <?php if ($carrera): ?>
+                           value="<?= ($this->esc($carrera['nombre'])) ?>"
+                       <else>
+                           value="<?= ($this->esc($data['nombre'])) ?>"
+                       <?php endif; ?>
+                       required>
             </div>
             
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="activo" name="activo" 
-                       <?php if ($carrera['activo'] ?? $data['activo'] ?? true): ?>checked<?php endif; ?>>
+                       <?php if ($carrera): ?>
+                           <?php if ($carrera['activo']): ?>checked<?php endif; ?>
+                       <else>
+                           <?php if ($data['activo']): ?>checked<?php endif; ?>
+                       <?php endif; ?>
+                       <else>
+                           checked
+                       >
                 <label class="form-check-label" for="activo">Activo</label>
             </div>
             

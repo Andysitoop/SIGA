@@ -29,7 +29,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="<check if="{{ @nota }}">/notas/{{ @nota.id_nota }}/actualizar<else>/notas/guardar</check>" method="POST">
+        <form action="<check if="{{ @nota && @nota.id_nota }}">/notas/{{ @nota.id_nota }}/actualizar<else>/notas/guardar</check>" method="POST">
             <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
             <input type="hidden" name="id_alumno" value="{{ @alumno.id_alumno }}">
             
@@ -41,7 +41,11 @@
                             <option value="">Seleccione un semestre</option>
                             <repeat group="{{ @semestres }}" value="{{ @semestre }}">
                                 <option value="{{ @semestre.id_semestre }}" 
-                                        <check if="{{ (@nota.id_semestre ?? @data.id_semestre) == @semestre.id_semestre }}">selected</check>>
+                                        <check if="{{ @nota }}">
+                                            <check if="{{ @nota.id_semestre == @semestre.id_semestre }}">selected</check>
+                                        <else>
+                                            <check if="{{ @data.id_semestre == @semestre.id_semestre }}">selected</check>
+                                        </check>>
                                     {{ @semestre.nombre }}
                                 </option>
                             </repeat>
@@ -56,7 +60,11 @@
                             <option value="">Seleccione una sección</option>
                             <repeat group="{{ @secciones }}" value="{{ @seccion }}">
                                 <option value="{{ @seccion.id_seccion }}" 
-                                        <check if="{{ (@nota.id_seccion ?? @data.id_seccion) == @seccion.id_seccion }}">selected</check>>
+                                        <check if="{{ @nota }}">
+                                            <check if="{{ @nota.id_seccion == @seccion.id_seccion }}">selected</check>
+                                        <else>
+                                            <check if="{{ @data.id_seccion == @seccion.id_seccion }}">selected</check>
+                                        </check>>
                                     {{ @seccion.nombre }}
                                 </option>
                             </repeat>
@@ -73,7 +81,11 @@
                             <option value="">Seleccione un curso</option>
                             <repeat group="{{ @cursos }}" value="{{ @curso }}">
                                 <option value="{{ @curso.id_curso }}" 
-                                        <check if="{{ (@nota.id_curso ?? @data.id_curso) == @curso.id_curso }}">selected</check>>
+                                        <check if="{{ @nota }}">
+                                            <check if="{{ @nota.id_curso == @curso.id_curso }}">selected</check>
+                                        <else>
+                                            <check if="{{ @data.id_curso == @curso.id_curso }}">selected</check>
+                                        </check>>
                                     {{ @curso.codigo }} - {{ @curso.nombre }}
                                 </option>
                             </repeat>
@@ -85,7 +97,11 @@
                     <div class="mb-3">
                         <label for="nota" class="form-label">Nota * ({{ @nota_minima }} - {{ @nota_maxima }})</label>
                         <input type="number" class="form-control" id="nota" name="nota" 
-                               value="{{ @nota.nota ?? @data.nota }}" 
+                               <check if="{{ @nota }}">
+                                   value="{{ @nota.nota }}"
+                               <else>
+                                   value="{{ @data.nota }}"
+                               </check>
                                min="{{ @nota_minima }}" max="{{ @nota_maxima }}" step="0.01" required>
                         <div class="form-text">Nota mínima para aprobar: {{ @nota_minima }}</div>
                     </div>

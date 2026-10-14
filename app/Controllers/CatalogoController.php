@@ -39,6 +39,9 @@ class CatalogoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
+        $f3->set('carrera', null);
+        $f3->set('data', []);
+        $f3->set('form_action', '/carreras/guardar');
         $f3->set('title', 'Nueva Carrera');
         $f3->set('content', 'catalogos/carreras/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -110,6 +113,7 @@ class CatalogoController
         }
         
         $f3->set('carrera', $carrera);
+        $f3->set('form_action', '/carreras/' . $carrera['id_carrera'] . '/actualizar');
         $f3->set('title', 'Editar Carrera');
         $f3->set('content', 'catalogos/carreras/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -230,6 +234,9 @@ class CatalogoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
+        $f3->set('curso', null);
+        $f3->set('data', []);
+        $f3->set('form_action', '/cursos/guardar');
         $f3->set('title', 'Nuevo Curso');
         $f3->set('content', 'catalogos/cursos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -310,6 +317,7 @@ class CatalogoController
         }
         
         $f3->set('curso', $curso);
+        $f3->set('form_action', '/cursos/' . $curso['id_curso'] . '/actualizar');
         $f3->set('title', 'Editar Curso');
         $f3->set('content', 'catalogos/cursos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -439,6 +447,9 @@ class CatalogoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
+        $f3->set('semestre', null);
+        $f3->set('data', []);
+        $f3->set('form_action', '/semestres/guardar');
         $f3->set('title', 'Nuevo Semestre');
         $f3->set('content', 'catalogos/semestres/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -510,6 +521,7 @@ class CatalogoController
         }
         
         $f3->set('semestre', $semestre);
+        $f3->set('form_action', '/semestres/' . $semestre['id_semestre'] . '/actualizar');
         $f3->set('title', 'Editar Semestre');
         $f3->set('content', 'catalogos/semestres/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -630,6 +642,9 @@ class CatalogoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
+        $f3->set('seccion', null);
+        $f3->set('data', []);
+        $f3->set('form_action', '/secciones/guardar');
         $f3->set('title', 'Nueva Sección');
         $f3->set('content', 'catalogos/secciones/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -701,6 +716,7 @@ class CatalogoController
         }
         
         $f3->set('seccion', $seccion);
+        $f3->set('form_action', '/secciones/' . $seccion['id_seccion'] . '/actualizar');
         $f3->set('title', 'Editar Sección');
         $f3->set('content', 'catalogos/secciones/form.html');
         $f3->set('csrf_token', Csrf::generateToken());

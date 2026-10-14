@@ -37,6 +37,7 @@ class AlumnoController
         $f3->set('page', $page);
         $f3->set('totalPages', $totalPages);
         $f3->set('total', $total);
+        $f3->set('query', '');
         $f3->set('title', 'Alumnos');
         $f3->set('content', 'alumnos/index.html');
         
@@ -82,6 +83,9 @@ class AlumnoController
         $carreras = Carrera::getAll();
         
         $f3->set('carreras', $carreras);
+        $f3->set('alumno', null);
+        $f3->set('data', []);
+        $f3->set('form_action', '/alumnos/guardar');
         $f3->set('title', 'Nuevo Alumno');
         $f3->set('content', 'alumnos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -221,6 +225,7 @@ class AlumnoController
         
         $f3->set('alumno', $alumno);
         $f3->set('carreras', $carreras);
+        $f3->set('form_action', '/alumnos/' . $alumno['id_alumno'] . '/actualizar');
         $f3->set('title', 'Editar Alumno');
         $f3->set('content', 'alumnos/form.html');
         $f3->set('csrf_token', Csrf::generateToken());

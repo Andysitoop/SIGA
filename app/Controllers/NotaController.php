@@ -133,8 +133,11 @@ class NotaController
         $f3->set('cursos', $cursos);
         $f3->set('semestres', $semestres);
         $f3->set('secciones', $secciones);
+        $f3->set('nota', null);
+        $f3->set('data', []);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('nota_maxima', $config['nota_maxima']);
+        $f3->set('form_action', '/notas/guardar');
         $f3->set('title', 'Registrar Nota');
         $f3->set('content', 'notas/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
