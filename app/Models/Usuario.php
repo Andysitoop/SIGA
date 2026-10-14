@@ -57,6 +57,11 @@ class Usuario
         );
     }
 
+    public static function delete(int $id): bool
+    {
+        return Database::execute("DELETE FROM usuarios WHERE id_usuario = ?", [$id]);
+    }
+
     public static function countActiveAdmins(): int
     {
         $result = Database::queryOne(

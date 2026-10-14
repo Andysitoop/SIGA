@@ -67,26 +67,64 @@
                     <div class="mb-3">
                         <label for="fotografia" class="form-label">Fotografía</label>
                         <input type="file" class="form-control" id="fotografia" name="fotografia" 
-                               accept="image/jpeg,image/jpg,image/png"
-                               onchange="previewImage(this, 'preview-foto')">
+                               accept="image/jpeg,image/jpg,image/png">
                         <div class="form-text">Formatos: JPG, JPEG, PNG. Máximo 2MB</div>
                     </div>
                     
                     <div class="mb-3 text-center">
-                        <check if="{{ @alumno }}">
-                            <check if="{{ @alumno.foto_url }}">
-                                <img src="{{ @alumno.foto_url }}" alt="Foto actual" id="preview-foto" class="foto-alumno-lg mb-2">
-                            <else>
-                                <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-2" id="preview-foto">
-                                    <i class="bi bi-person fs-1"></i>
-                                </div>
-                            </check>
-                        <else>
-                            <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-2" id="preview-foto">
-                                <i class="bi bi-person fs-1"></i>
-                            </div>
-                        </check>
+                        <div data-src="{{ @foto_url }}" id="preview-foto"
+                             class="photo-preview foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-2"
+                             role="img" aria-label="Foto del alumno">
+                            <i class="bi bi-person fs-1" aria-hidden="true"></i>
+                        </div>
                     </div>
+                    <check if="{{ @foto_url }}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remove-photo" name="remove_photo" value="1"
+                                   <check if="{{ @data.remove_photo }}">checked</check>>
+                            <label class="form-check-label" for="remove-photo">Quitar foto actual</label>
+                        </div>
+                    </check>
+                    <script>
+                        (() => {
+                            const preview = document.getElementById('preview-foto');
+                            const fallback = '<i class="bi bi-person fs-1" aria-hidden="true"></i>';
+                            const showImage = source => {
+                                const image = document.createElement('img');
+                                image.className = 'foto-alumno-lg';
+                                image.alt = 'Foto del alumno';
+                                image.onerror = () => preview.innerHTML = fallback;
+                                image.src = source;
+                                preview.replaceChildren(image);
+                            };
+                            const photoInput = document.getElementById('fotografia');
+                            const removePhoto = document.getElementById('remove-photo');
+
+                            if (preview.dataset.src && !(removePhoto && removePhoto.checked)) {
+                                showImage(preview.dataset.src);
+                            }
+
+                            photoInput.addEventListener('change', () => {
+                                if (photoInput.files && photoInput.files[0]) {
+                                    if (removePhoto) removePhoto.checked = false;
+                                    const reader = new FileReader();
+                                    reader.onload = event => showImage(event.target.result);
+                                    reader.readAsDataURL(photoInput.files[0]);
+                                }
+                            });
+
+                            if (removePhoto) {
+                                removePhoto.addEventListener('change', () => {
+                                    if (removePhoto.checked) {
+                                        photoInput.value = '';
+                                        preview.innerHTML = fallback;
+                                    } else if (preview.dataset.src) {
+                                        showImage(preview.dataset.src);
+                                    }
+                                });
+                            }
+                        })();
+                    </script>
                 </div>
             </div>
             

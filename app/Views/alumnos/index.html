@@ -41,13 +41,11 @@
                     <repeat group="{{ @alumnos }}" value="{{ @alumno }}">
                         <tr>
                             <td>
-                                <check if="{{ @alumno.fotografia }}">
-                                    <img src="{{ @alumno.fotografia }}" alt="Foto" class="foto-alumno">
-                                <else>
-                                    <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
-                                        <i class="bi bi-person"></i>
-                                    </div>
-                                </check>
+                                <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white js-avatar"
+                                     data-src="{{ @alumno.foto_url }}"
+                                     aria-label="Foto de {{ @alumno.nombres }} {{ @alumno.apellidos }}">
+                                    <i class="bi bi-person" aria-hidden="true"></i>
+                                </div>
                             </td>
                             <td>{{ @alumno.apellidos }}, {{ @alumno.nombres }}</td>
                             <td>{{ @alumno.nombre_carrera }}</td>
@@ -68,15 +66,16 @@
                                     <a href="/alumnos/{{ @alumno.id_alumno }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if="{{ @alumno.activo }}">
-                                        <a href="/alumnos/{{ @alumno.id_alumno }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
-                                            <i class="bi bi-x-circle"></i>
-                                        </a>
-                                    <else>
-                                        <a href="/alumnos/{{ @alumno.id_alumno }}/activar" class="btn btn-outline-success" title="Activar">
-                                            <i class="bi bi-check-circle"></i>
-                                        </a>
-                                    </check>
+                                    <form class="d-inline" action="/alumnos/{{ @alumno.id_alumno }}/eliminar" method="POST" onsubmit="return confirmEliminacion(this)">
+                                        <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
+                                        <select class="form-select form-select-sm d-inline-block" name="delete_mode" aria-label="Qué hacer con las notas asociadas">
+                                            <option value="restrict" data-i18n="No borrar notas">No borrar notas</option>
+                                            <option value="cascade" data-i18n="Borrar también notas">Borrar también notas</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-outline-danger" title="Eliminar permanentemente">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                     <a href="/notas/buscar?q={{ @alumno.nombres }} {{ @alumno.apellidos }}" class="btn btn-outline-secondary" title="Notas">
                                         <i class="bi bi-journal-text"></i>
                                     </a>

@@ -42,6 +42,14 @@ class Alumno
         
         return Database::queryOne($sql, [$id]);
     }
+
+    public static function getPhotosByCareer(int $careerId): array
+    {
+        return Database::query(
+            "SELECT fotografia FROM alumnos WHERE id_carrera = ? AND fotografia IS NOT NULL AND fotografia != ''",
+            [$careerId]
+        );
+    }
     
     /**
      * Busca alumnos por nombre o apellido
@@ -91,7 +99,7 @@ class Alumno
             $data['id_carrera']
         ];
         
-        if (isset($data['fotografia'])) {
+        if (array_key_exists('fotografia', $data)) {
             $sql .= ", fotografia = ?";
             $params[] = $data['fotografia'];
         }
@@ -109,6 +117,31 @@ class Alumno
     {
         $sql = "UPDATE alumnos SET activo = 0 WHERE id_alumno = ?";
         return Database::execute($sql, [$id]);
+    }
+
+    public static function delete(int $id, bool $cascade = false): bool
+    {
+        $pdo = Database::getConnection();
+        $pdo->beginTransaction();
+
+        try {
+            if ($cascade) {
+                $stmt = $pdo->prepare("DELETE FROM notas WHERE id_alumno = ?");
+                $stmt->execute([$id]);
+            }
+
+            $stmt = $pdo->prepare("DELETE FROM alumnos WHERE id_alumno = ?");
+            $stmt->execute([$id]);
+            $deleted = $stmt->rowCount() > 0;
+            $pdo->commit();
+
+            return $deleted;
+        } catch (\Throwable $error) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $error;
+        }
     }
     
     /**

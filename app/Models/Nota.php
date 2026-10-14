@@ -118,6 +118,11 @@ class Nota
         $sql = "UPDATE notas SET activo = 0 WHERE id_nota = ?";
         return Database::execute($sql, [$id]);
     }
+
+    public static function delete(int $id): bool
+    {
+        return Database::execute("DELETE FROM notas WHERE id_nota = ?", [$id]);
+    }
     
     /**
      * Cuenta el total de notas

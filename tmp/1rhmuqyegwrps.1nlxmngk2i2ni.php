@@ -12,25 +12,13 @@
             
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre *</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" 
-                       <?php if ($carrera): ?>
-                           value="<?= ($this->esc($carrera['nombre'])) ?>"
-                       <else>
-                           value="<?= ($this->esc($data['nombre'])) ?>"
-                       <?php endif; ?>
-                       required>
+                <input type="text" class="form-control" id="nombre" name="nombre"
+                       value="<?= ($this->esc($data['nombre'])) ?>" required>
             </div>
             
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="activo" name="activo" 
-                       <?php if ($carrera): ?>
-                           <?php if ($carrera['activo']): ?>checked<?php endif; ?>
-                       <else>
-                           <?php if ($data['activo']): ?>checked<?php endif; ?>
-                       <?php endif; ?>
-                       <else>
-                           checked
-                       >
+                <input type="checkbox" class="form-check-input" id="activo" name="activo"
+                       <?php if ($data['activo']): ?>checked<?php endif; ?>>
                 <label class="form-check-label" for="activo">Activo</label>
             </div>
             

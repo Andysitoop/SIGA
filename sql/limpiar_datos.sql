@@ -9,6 +9,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Eliminar datos en orden correcto (hijos primero, padres después)
 DELETE FROM notas;
 DELETE FROM alumnos;
+DELETE FROM usuarios;
 DELETE FROM secciones;
 DELETE FROM cursos;
 DELETE FROM semestres;
@@ -24,5 +25,6 @@ ALTER TABLE cursos AUTO_INCREMENT = 1;
 ALTER TABLE semestres AUTO_INCREMENT = 1;
 ALTER TABLE secciones AUTO_INCREMENT = 1;
 ALTER TABLE notas AUTO_INCREMENT = 1;
+ALTER TABLE usuarios AUTO_INCREMENT = 1;
 
 SELECT 'Datos eliminados correctamente. La base de datos está vacía.' AS mensaje;

@@ -34,11 +34,9 @@ class DashboardController
         $totalCursos = Curso::count();
         $totalNotas = Nota::count();
         
-        // Últimos alumnos registrados
-        $ultimosAlumnos = Alumno::getLatest(5);
-        
-        // Últimas notas ingresadas
-        $ultimasNotas = Nota::getLatest(5);
+        $isAdmin = ($_SESSION['user_role'] ?? '') === 'admin';
+        $ultimosAlumnos = $isAdmin ? Alumno::getLatest(5) : [];
+        $ultimasNotas = $isAdmin ? Nota::getLatest(5) : [];
         
         $f3->set('total_alumnos', $totalAlumnos);
         $f3->set('total_carreras', $totalCarreras);
@@ -46,6 +44,7 @@ class DashboardController
         $f3->set('total_notas', $totalNotas);
         $f3->set('ultimos_alumnos', $ultimosAlumnos);
         $f3->set('ultimas_notas', $ultimasNotas);
+        $f3->set('is_admin', $isAdmin);
         $f3->set('APP_NAME', $config['name']);
         $f3->set('title', 'Dashboard');
         $f3->set('content', 'dashboard/index.html');

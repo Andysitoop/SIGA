@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Models\Alumno;
 use App\Models\Carrera;
+use App\Models\Nota;
+use App\Helpers\Access;
 use App\Helpers\Csrf;
 use App\Helpers\Validation;
 use App\Helpers\File;
@@ -13,6 +15,11 @@ use App\Helpers\File;
  */
 class AlumnoController
 {
+    public function __construct()
+    {
+        Access::requireAdmin();
+    }
+
     /**
      * Muestra la lista de alumnos
      */
@@ -29,7 +36,7 @@ class AlumnoController
         $page = $f3->get('GET.page') ?? 1;
         $limit = 20;
         
-        $alumnos = Alumno::getAll($page, $limit);
+        $alumnos = $this->withPhotoUrls(Alumno::getAll($page, $limit));
         $total = Alumno::count();
         $totalPages = ceil($total / $limit);
         
@@ -38,6 +45,7 @@ class AlumnoController
         $f3->set('totalPages', $totalPages);
         $f3->set('total', $total);
         $f3->set('query', '');
+        $f3->set('csrf_token', Csrf::generateToken());
         $f3->set('title', 'Alumnos');
         $f3->set('content', 'alumnos/index.html');
         
@@ -61,7 +69,7 @@ class AlumnoController
         
         $alumnos = [];
         if (!empty($query)) {
-            $alumnos = Alumno::search($query, 20);
+            $alumnos = $this->withPhotoUrls(Alumno::search($query, 20));
         }
         
         $f3->set('alumnos', $alumnos);
@@ -70,6 +78,20 @@ class AlumnoController
         $f3->set('content', 'alumnos/buscar.html');
         
         echo \Template::instance()->render('layouts/main.html');
+    }
+
+    private function withPhotoUrls(array $alumnos): array
+    {
+        $uploadUrl = (require __DIR__ . '/../../config/app.php')['upload_url'];
+
+        foreach ($alumnos as &$alumno) {
+            $alumno['foto_url'] = !empty($alumno['fotografia'])
+                ? $uploadUrl . $alumno['fotografia']
+                : '';
+        }
+        unset($alumno);
+
+        return $alumnos;
     }
     
     /**
@@ -84,6 +106,7 @@ class AlumnoController
         
         $f3->set('carreras', $carreras);
         $f3->set('alumno', null);
+        $f3->set('foto_url', '');
         $f3->set('data', []);
         $f3->set('form_action', '/alumnos/guardar');
         $f3->set('title', 'Nuevo Alumno');
@@ -181,7 +204,7 @@ class AlumnoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         
         $alumno = Alumno::getById($id);
         
@@ -193,8 +216,10 @@ class AlumnoController
         
         $config = require __DIR__ . '/../../config/app.php';
         $alumno['foto_url'] = $alumno['fotografia'] ? $config['upload_url'] . $alumno['fotografia'] : null;
+        $notas = Nota::getByAlumno((int)$id);
         
         $f3->set('alumno', $alumno);
+        $f3->set('notas', $notas);
         $f3->set('title', 'Detalle del Alumno');
         $f3->set('content', 'alumnos/ver.html');
         
@@ -209,7 +234,7 @@ class AlumnoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         
         $alumno = Alumno::getById($id);
         $carreras = Carrera::getAll();
@@ -222,8 +247,18 @@ class AlumnoController
         
         $config = require __DIR__ . '/../../config/app.php';
         $alumno['foto_url'] = $alumno['fotografia'] ? $config['upload_url'] . $alumno['fotografia'] : null;
+        $submittedData = $f3->get('data');
+        $submittedData = is_array($submittedData) ? $submittedData : [];
         
         $f3->set('alumno', $alumno);
+        $f3->set('foto_url', $alumno['foto_url'] ?? '');
+        $f3->set('data', [
+            'nombres' => $submittedData['nombres'] ?? $alumno['nombres'],
+            'apellidos' => $submittedData['apellidos'] ?? $alumno['apellidos'],
+            'fecha_nacimiento' => $submittedData['fecha_nacimiento'] ?? $alumno['fecha_nacimiento'],
+            'id_carrera' => $submittedData['id_carrera'] ?? $alumno['id_carrera'],
+            'remove_photo' => $submittedData['remove_photo'] ?? ''
+        ]);
         $f3->set('carreras', $carreras);
         $f3->set('form_action', '/alumnos/' . $alumno['id_alumno'] . '/actualizar');
         $f3->set('title', 'Editar Alumno');
@@ -241,7 +276,7 @@ class AlumnoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         $config = require __DIR__ . '/../../config/app.php';
         
         // Validar CSRF
@@ -272,18 +307,14 @@ class AlumnoController
             $errors[] = 'La carrera es obligatoria';
         }
         
-        // Validar y procesar nueva imagen
+        $alumnoActual = Alumno::getById((int)$id);
+        $fotoAnterior = $alumnoActual['fotografia'] ?? null;
+        $quitarFoto = isset($_POST['remove_photo']) && $_POST['remove_photo'] === '1';
         $fotoNombre = null;
         if (isset($_FILES['fotografia']) && $_FILES['fotografia']['error'] === UPLOAD_ERR_OK) {
             if (!File::isValidImage($_FILES['fotografia'], $config['allowed_image_types'], $config['max_file_size'])) {
                 $errors[] = 'La imagen no es válida. Debe ser JPG, JPEG o PNG y no superar 2MB';
             } else {
-                // Eliminar foto anterior si existe
-                $alumnoActual = Alumno::getById($id);
-                if ($alumnoActual && $alumnoActual['fotografia']) {
-                    File::delete($config['upload_path'] . $alumnoActual['fotografia']);
-                }
-                
                 $fotoNombre = File::generateUniqueName($_FILES['fotografia']['name']);
                 $uploadPath = $config['upload_path'] . $fotoNombre;
                 
@@ -295,6 +326,9 @@ class AlumnoController
         }
         
         if (!empty($errors)) {
+            if ($fotoNombre !== null) {
+                File::delete($config['upload_path'] . $fotoNombre);
+            }
             $f3->set('error', implode('<br>', $errors));
             $f3->set('data', $_POST);
             $this->editar();
@@ -309,15 +343,24 @@ class AlumnoController
                 'id_carrera' => (int)$_POST['id_carrera']
             ];
             
-            if ($fotoNombre) {
+            if ($fotoNombre !== null) {
                 $data['fotografia'] = $fotoNombre;
+            } elseif ($quitarFoto) {
+                $data['fotografia'] = null;
             }
             
             Alumno::update($id, $data);
+
+            if (($fotoNombre !== null || $quitarFoto) && $fotoAnterior) {
+                File::delete($config['upload_path'] . $fotoAnterior);
+            }
             
             $f3->set('success', 'Alumno actualizado exitosamente');
             $this->index();
         } catch (\Exception $e) {
+            if ($fotoNombre !== null) {
+                File::delete($config['upload_path'] . $fotoNombre);
+            }
             $f3->set('error', 'Error al actualizar el alumno: ' . $e->getMessage());
             $f3->set('data', $_POST);
             $this->editar();
@@ -332,7 +375,7 @@ class AlumnoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         
         try {
             Alumno::deactivate($id);
@@ -352,7 +395,7 @@ class AlumnoController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         
         try {
             Alumno::activate($id);
@@ -361,6 +404,48 @@ class AlumnoController
             $f3->set('error', 'Error al activar el alumno: ' . $e->getMessage());
         }
         
+        $this->index();
+    }
+
+    public function eliminar()
+    {
+        $f3 = \Base::instance();
+        $id = filter_var($f3->get('PARAMS.id'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1]
+        ]);
+        $mode = (string)($_POST['delete_mode'] ?? 'restrict');
+
+        if ($id === false || !Csrf::validateToken((string)($_POST['csrf_token'] ?? ''))
+            || !in_array($mode, ['restrict', 'cascade'], true)) {
+            $f3->set('error', 'La solicitud de eliminación no es válida.');
+            $this->index();
+            return;
+        }
+
+        $alumno = Alumno::getById($id);
+        if (!$alumno) {
+            $f3->set('error', 'No se encontró el alumno.');
+            $this->index();
+            return;
+        }
+
+        try {
+            Alumno::delete($id, $mode === 'cascade');
+            if (!empty($alumno['fotografia'])) {
+                $config = require __DIR__ . '/../../config/app.php';
+                File::delete($config['upload_path'] . $alumno['fotografia']);
+            }
+            $f3->set('success', 'Alumno eliminado permanentemente.');
+        } catch (\PDOException $error) {
+            if ((string)$error->getCode() === '23000') {
+                $f3->set('error', 'El alumno tiene notas asociadas. Elige borrar también las notas para continuar.');
+            } elseif (($error->errorInfo[1] ?? null) === 1142) {
+                $f3->set('error', 'La cuenta MySQL de la aplicación necesita permiso DELETE. Ejecuta sql/habilitar_eliminacion.sql con un administrador MySQL.');
+            } else {
+                $f3->set('error', 'No se pudo eliminar el alumno por un error de base de datos.');
+            }
+        }
+
         $this->index();
     }
 }

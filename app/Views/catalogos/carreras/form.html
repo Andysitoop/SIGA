@@ -12,25 +12,13 @@
             
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre *</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" 
-                       <check if="{{ @carrera }}">
-                           value="{{ @carrera.nombre|esc }}"
-                       <else>
-                           value="{{ @data.nombre|esc }}"
-                       </check>
-                       required>
+                <input type="text" class="form-control" id="nombre" name="nombre"
+                       value="{{ @data.nombre|esc }}" required>
             </div>
             
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="activo" name="activo" 
-                       <check if="{{ @carrera }}">
-                           <check if="{{ @carrera.activo }}">checked</check>
-                       <else>
-                           <check if="{{ @data.activo }}">checked</check>
-                       </check>
-                       <else>
-                           checked
-                       </check>>
+                <input type="checkbox" class="form-check-input" id="activo" name="activo"
+                       <check if="{{ @data.activo }}">checked</check>>
                 <label class="form-check-label" for="activo">Activo</label>
             </div>
             

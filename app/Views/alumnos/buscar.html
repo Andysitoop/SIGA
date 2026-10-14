@@ -38,13 +38,11 @@
                         <repeat group="{{ @alumnos }}" value="{{ @alumno }}">
                             <tr>
                                 <td>
-                                    <check if="{{ @alumno.fotografia }}">
-                                        <img src="{{ @alumno.fotografia }}" alt="Foto" class="foto-alumno">
-                                    <else>
-                                        <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white">
-                                            <i class="bi bi-person"></i>
-                                        </div>
-                                    </check>
+                                    <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white js-avatar"
+                                         data-src="{{ @alumno.foto_url }}"
+                                         aria-label="Foto de {{ @alumno.nombres }} {{ @alumno.apellidos }}">
+                                        <i class="bi bi-person" aria-hidden="true"></i>
+                                    </div>
                                 </td>
                                 <td>{{ @alumno.apellidos }}, {{ @alumno.nombres }}</td>
                                 <td>{{ @alumno.nombre_carrera }}</td>

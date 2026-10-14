@@ -38,15 +38,16 @@
                                     <a href="/carreras/<?= ($carrera['id_carrera']) ?>/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <?php if ($carrera['activo']): ?>
-                                        <a href="/carreras/<?= ($carrera['id_carrera']) ?>/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
-                                            <i class="bi bi-x-circle"></i>
-                                        </a>
-                                    <else>
-                                        <a href="/carreras/<?= ($carrera['id_carrera']) ?>/activar" class="btn btn-outline-success" title="Activar">
-                                            <i class="bi bi-check-circle"></i>
-                                        </a>
-                                    <?php endif; ?>
+                                    <form class="d-inline" action="/carreras/<?= ($carrera['id_carrera']) ?>/eliminar" method="POST" onsubmit="return confirmEliminacion(this)">
+                                        <input type="hidden" name="csrf_token" value="<?= ($csrf_token) ?>">
+                                        <select class="form-select form-select-sm" name="delete_mode" aria-label="Qué hacer con los alumnos asociados">
+                                            <option value="restrict" data-i18n="No borrar alumnos">No borrar alumnos</option>
+                                            <option value="cascade" data-i18n="Borrar alumnos y notas">Borrar alumnos y notas</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-outline-danger" title="Eliminar permanentemente">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

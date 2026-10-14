@@ -57,6 +57,7 @@ $f3->route('GET /logout', 'App\Controllers\LoginController->logout');
 $f3->route('GET /ajustes', 'App\\Controllers\\AjustesController->index');
 $f3->route('POST /ajustes/usuarios', 'App\\Controllers\\AjustesController->createUser');
 $f3->route('POST /ajustes/usuarios/@id/estado/@estado', 'App\\Controllers\\AjustesController->setUserStatus');
+$f3->route('POST /ajustes/usuarios/@id/eliminar', 'App\\Controllers\\AjustesController->deleteUser');
 
 // ===== RUTAS DEL DASHBOARD =====
 
@@ -73,6 +74,7 @@ $f3->route('GET /alumnos/@id/editar', 'App\Controllers\AlumnoController->editar'
 $f3->route('POST /alumnos/@id/actualizar', 'App\Controllers\AlumnoController->actualizar');
 $f3->route('GET /alumnos/@id/desactivar', 'App\Controllers\AlumnoController->desactivar');
 $f3->route('GET /alumnos/@id/activar', 'App\Controllers\AlumnoController->activar');
+$f3->route('POST /alumnos/@id/eliminar', 'App\Controllers\AlumnoController->eliminar');
 
 // ===== RUTAS DE NOTAS =====
 
@@ -84,6 +86,7 @@ $f3->route('POST /notas/guardar', 'App\Controllers\NotaController->guardar');
 $f3->route('GET /notas/@id/editar', 'App\Controllers\NotaController->editar');
 $f3->route('POST /notas/@id/actualizar', 'App\Controllers\NotaController->actualizar');
 $f3->route('GET /notas/@id/desactivar', 'App\Controllers\NotaController->desactivar');
+$f3->route('POST /notas/@id/eliminar', 'App\Controllers\NotaController->eliminar');
 
 // ===== RUTAS DE CARRERAS =====
 
@@ -92,7 +95,7 @@ $f3->route('GET /carreras/nuevo', 'App\Controllers\CatalogoController->carrerasN
 $f3->route('POST /carreras/guardar', 'App\Controllers\CatalogoController->carrerasGuardar');
 $f3->route('GET /carreras/@id/editar', 'App\Controllers\CatalogoController->carrerasEditar');
 $f3->route('POST /carreras/@id/actualizar', 'App\Controllers\CatalogoController->carrerasActualizar');
-$f3->route('GET /carreras/@id/desactivar', 'App\Controllers\CatalogoController->carrerasDesactivar');
+$f3->route('POST /carreras/@id/eliminar', 'App\Controllers\CatalogoController->carrerasEliminar');
 $f3->route('GET /carreras/@id/activar', 'App\Controllers\CatalogoController->carrerasActivar');
 
 // ===== RUTAS DE CURSOS =====
@@ -102,7 +105,7 @@ $f3->route('GET /cursos/nuevo', 'App\Controllers\CatalogoController->cursosNuevo
 $f3->route('POST /cursos/guardar', 'App\Controllers\CatalogoController->cursosGuardar');
 $f3->route('GET /cursos/@id/editar', 'App\Controllers\CatalogoController->cursosEditar');
 $f3->route('POST /cursos/@id/actualizar', 'App\Controllers\CatalogoController->cursosActualizar');
-$f3->route('GET /cursos/@id/desactivar', 'App\Controllers\CatalogoController->cursosDesactivar');
+$f3->route('POST /cursos/@id/eliminar', 'App\Controllers\CatalogoController->cursosEliminar');
 $f3->route('GET /cursos/@id/activar', 'App\Controllers\CatalogoController->cursosActivar');
 
 // ===== RUTAS DE SEMESTRES =====
@@ -112,7 +115,7 @@ $f3->route('GET /semestres/nuevo', 'App\Controllers\CatalogoController->semestre
 $f3->route('POST /semestres/guardar', 'App\Controllers\CatalogoController->semestresGuardar');
 $f3->route('GET /semestres/@id/editar', 'App\Controllers\CatalogoController->semestresEditar');
 $f3->route('POST /semestres/@id/actualizar', 'App\Controllers\CatalogoController->semestresActualizar');
-$f3->route('GET /semestres/@id/desactivar', 'App\Controllers\CatalogoController->semestresDesactivar');
+$f3->route('POST /semestres/@id/eliminar', 'App\Controllers\CatalogoController->semestresEliminar');
 $f3->route('GET /semestres/@id/activar', 'App\Controllers\CatalogoController->semestresActivar');
 
 // ===== RUTAS DE SECCIONES =====
@@ -122,7 +125,7 @@ $f3->route('GET /secciones/nuevo', 'App\Controllers\CatalogoController->seccione
 $f3->route('POST /secciones/guardar', 'App\Controllers\CatalogoController->seccionesGuardar');
 $f3->route('GET /secciones/@id/editar', 'App\Controllers\CatalogoController->seccionesEditar');
 $f3->route('POST /secciones/@id/actualizar', 'App\Controllers\CatalogoController->seccionesActualizar');
-$f3->route('GET /secciones/@id/desactivar', 'App\Controllers\CatalogoController->seccionesDesactivar');
+$f3->route('POST /secciones/@id/eliminar', 'App\Controllers\CatalogoController->seccionesEliminar');
 $f3->route('GET /secciones/@id/activar', 'App\Controllers\CatalogoController->seccionesActivar');
 
 // ===== RUTAS DE REPORTES =====

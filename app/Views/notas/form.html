@@ -10,13 +10,11 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <check if="{{ @alumno.foto_url }}">
-                        <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno me-3">
-                    <else>
-                        <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white me-3">
-                            <i class="bi bi-person"></i>
-                        </div>
-                    </check>
+                    <div class="foto-alumno bg-secondary d-flex align-items-center justify-content-center text-white me-3 js-avatar"
+                         data-src="{{ @alumno.foto_url }}"
+                         aria-label="Foto de {{ @alumno.nombres }} {{ @alumno.apellidos }}">
+                        <i class="bi bi-person" aria-hidden="true"></i>
+                    </div>
                     <div>
                         <h5 class="mb-0">{{ @alumno.nombres }} {{ @alumno.apellidos }}</h5>
                         <small class="text-muted">{{ @alumno.nombre_carrera }}</small>
@@ -29,7 +27,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="<check if="{{ @nota && @nota.id_nota }}">/notas/{{ @nota.id_nota }}/actualizar<else>/notas/guardar</check>" method="POST">
+        <form action="{{ @form_action }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
             <input type="hidden" name="id_alumno" value="{{ @alumno.id_alumno }}">
             

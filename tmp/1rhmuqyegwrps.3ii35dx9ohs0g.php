@@ -210,24 +210,27 @@
                                 Dashboard
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php if ($content == 'alumnos/index.html' || $content == 'alumnos/form.html' || $content == 'alumnos/ver.html' || $content == 'alumnos/buscar.html'): ?>active<?php endif; ?>" href="/alumnos">
-                                <i class="bi bi-people-fill"></i>
-                                Alumnos
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php if ($content == 'notas/index.html' || $content == 'notas/form.html' || $content == 'notas/historial.html' || $content == 'notas/buscar.html'): ?>active<?php endif; ?>" href="/notas">
-                                <i class="bi bi-journal-text"></i>
-                                Notas
-                            </a>
-                        </li>
+                        <?php if ($SESSION['user_role'] == 'admin'): ?>
+                            <li class="nav-item">
+                                <a class="nav-link <?php if ($content == 'alumnos/index.html' || $content == 'alumnos/form.html' || $content == 'alumnos/ver.html' || $content == 'alumnos/buscar.html'): ?>active<?php endif; ?>" href="/alumnos">
+                                    <i class="bi bi-people-fill"></i>
+                                    Alumnos
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link <?php if ($content == 'notas/index.html' || $content == 'notas/form.html' || $content == 'notas/historial.html' || $content == 'notas/buscar.html'): ?>active<?php endif; ?>" href="/notas">
+                                    <i class="bi bi-journal-text"></i>
+                                    Notas
+                                </a>
+                            </li>
+                        <?php endif; ?>
                         <li class="nav-item">
                             <a class="nav-link <?php if ($content == 'reportes/alumnos.html' || $content == 'reportes/notas.html' || $content == 'reportes/alumno.html'): ?>active<?php endif; ?>" href="/reportes/alumnos">
                                 <i class="bi bi-file-earmark-bar-graph-fill"></i>
                                 Reportes
                             </a>
                         </li>
+                        <?php if ($SESSION['user_role'] == 'admin'): ?>
                         <li class="nav-item">
                             <hr class="text-white">
                             <span class="text-white-50 small px-3">Catálogos</span>
@@ -256,13 +259,12 @@
                                 Secciones
                             </a>
                         </li>
-                        <?php if ($SESSION['logged_in'] == true): ?>
-                            <li class="nav-item">
-                                <a class="nav-link <?php if ($content == 'ajustes/index.html'): ?>active<?php endif; ?>" href="/ajustes">
-                                    <i class="bi bi-sliders2"></i>
-                                    <span data-i18n="Ajustes">Ajustes</span>
-                                </a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php if ($content == 'ajustes/index.html'): ?>active<?php endif; ?>" href="/ajustes">
+                                <i class="bi bi-sliders2"></i>
+                                <span data-i18n="Ajustes">Ajustes</span>
+                            </a>
+                        </li>
                         <?php endif; ?>
                         <li class="nav-item">
                             <hr class="text-white">
@@ -309,6 +311,14 @@
         function confirmDesactivacion(message) {
             return confirm(message || '¿Está seguro de que desea desactivar este registro?');
         }
+
+        function confirmEliminacion(form) {
+            var mode = form && form.elements.delete_mode ? form.elements.delete_mode.value : 'restrict';
+            var impact = mode === 'cascade'
+                ? ' También se eliminarán permanentemente sus registros relacionados.'
+                : ' Si tiene registros relacionados, la eliminación será rechazada.';
+            return confirm('¿Está seguro de que desea eliminar permanentemente este registro?' + impact);
+        }
         
         // Vista previa de imagen
         function previewImage(input, previewId) {
@@ -320,6 +330,19 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
+        document.querySelectorAll('.js-avatar[data-src]').forEach(function(avatar) {
+            var source = avatar.dataset.src;
+            if (!source) return;
+
+            var image = new Image();
+            image.className = 'avatar-image';
+            image.alt = avatar.getAttribute('aria-label') || 'Foto';
+            image.onload = function() {
+                avatar.replaceChildren(image);
+            };
+            image.src = source;
+        });
 
         document.querySelector('.nav-toggle')?.addEventListener('click', function() {
             const navigation = document.getElementById('primaryNavigation');

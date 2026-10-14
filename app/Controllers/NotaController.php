@@ -9,12 +9,18 @@ use App\Models\Semestre;
 use App\Models\Seccion;
 use App\Helpers\Csrf;
 use App\Helpers\Validation;
+use App\Helpers\Access;
 
 /**
  * Controlador para gestión de notas
  */
 class NotaController
 {
+    public function __construct()
+    {
+        Access::requireAdmin();
+    }
+
     /**
      * Muestra la lista de notas
      */
@@ -31,6 +37,7 @@ class NotaController
         $notas = Nota::getLatest(20);
         
         $f3->set('notas', $notas);
+        $f3->set('csrf_token', Csrf::generateToken());
         $f3->set('title', 'Notas');
         $f3->set('content', 'notas/index.html');
         
@@ -55,6 +62,13 @@ class NotaController
         $alumnos = [];
         if (!empty($query)) {
             $alumnos = Alumno::search($query, 10);
+            $uploadUrl = (require __DIR__ . '/../../config/app.php')['upload_url'];
+            foreach ($alumnos as &$alumno) {
+                $alumno['foto_url'] = !empty($alumno['fotografia'])
+                    ? $uploadUrl . $alumno['fotografia']
+                    : '';
+            }
+            unset($alumno);
         }
         
         $f3->set('alumnos', $alumnos);
@@ -73,8 +87,22 @@ class NotaController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
-        
+        $id = filter_var($f3->get('PARAMS.id'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1]
+        ]);
+
+        if ($id === false) {
+            $f3->set('error', 'Debe seleccionar un alumno para ver su historial.');
+            $this->buscar();
+            return;
+        }
+
+        $this->mostrarHistorial($id);
+    }
+
+    private function mostrarHistorial(int $id): void
+    {
+        $f3 = \Base::instance();
         $alumno = Alumno::getById($id);
         
         if (!$alumno) {
@@ -92,6 +120,7 @@ class NotaController
         $f3->set('alumno', $alumno);
         $f3->set('notas', $notas);
         $f3->set('stats', $stats);
+        $f3->set('csrf_token', Csrf::generateToken());
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Historial de Notas');
         $f3->set('content', 'notas/historial.html');
@@ -107,7 +136,7 @@ class NotaController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $idAlumno = $f3->get('GET.id_alumno');
+        $idAlumno = $f3->get('GET.id_alumno') ?? $_POST['id_alumno'] ?? null;
         
         if (!$idAlumno) {
             $f3->set('error', 'Debe seleccionar un alumno primero');
@@ -134,7 +163,12 @@ class NotaController
         $f3->set('semestres', $semestres);
         $f3->set('secciones', $secciones);
         $f3->set('nota', null);
-        $f3->set('data', []);
+        $f3->set('data', [
+            'id_semestre' => $_POST['id_semestre'] ?? '',
+            'id_seccion' => $_POST['id_seccion'] ?? '',
+            'id_curso' => $_POST['id_curso'] ?? '',
+            'nota' => $_POST['nota'] ?? ''
+        ]);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('nota_maxima', $config['nota_maxima']);
         $f3->set('form_action', '/notas/guardar');
@@ -222,7 +256,7 @@ class NotaController
             ]);
             
             $f3->set('success', 'Nota registrada exitosamente');
-            $this->historial((int)$_POST['id_alumno']);
+            $this->mostrarHistorial((int)$_POST['id_alumno']);
         } catch (\Exception $e) {
             $f3->set('error', 'Error al registrar la nota: ' . $e->getMessage());
             $f3->set('data', $_POST);
@@ -238,7 +272,7 @@ class NotaController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         
         $nota = Nota::getById($id);
         
@@ -263,6 +297,13 @@ class NotaController
         $f3->set('secciones', $secciones);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('nota_maxima', $config['nota_maxima']);
+        $f3->set('form_action', '/notas/' . $nota['id_nota'] . '/actualizar');
+        $f3->set('data', [
+            'id_semestre' => '',
+            'id_seccion' => '',
+            'id_curso' => '',
+            'nota' => ''
+        ]);
         $f3->set('title', 'Editar Nota');
         $f3->set('content', 'notas/form.html');
         $f3->set('csrf_token', Csrf::generateToken());
@@ -278,7 +319,7 @@ class NotaController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         $config = require __DIR__ . '/../../config/app.php';
         
         // Validar CSRF
@@ -343,7 +384,7 @@ class NotaController
             ]);
             
             $f3->set('success', 'Nota actualizada exitosamente');
-            $this->historial((int)$_POST['id_alumno']);
+            $this->mostrarHistorial((int)$_POST['id_alumno']);
         } catch (\Exception $e) {
             $f3->set('error', 'Error al actualizar la nota: ' . $e->getMessage());
             $f3->set('data', $_POST);
@@ -359,7 +400,7 @@ class NotaController
         if (!isset($_SESSION)) session_start();
         
         $f3 = \Base::instance();
-        $id = $f3->get('Param.id');
+        $id = $f3->get('PARAMS.id');
         
         try {
             $nota = Nota::getById($id);
@@ -367,12 +408,45 @@ class NotaController
             $f3->set('success', 'Nota desactivada exitosamente');
             
             if ($nota) {
-                $this->historial($nota['id_alumno']);
+                $this->mostrarHistorial((int)$nota['id_alumno']);
             } else {
                 $this->index();
             }
         } catch (\Exception $e) {
             $f3->set('error', 'Error al desactivar la nota: ' . $e->getMessage());
+            $this->index();
+        }
+    }
+
+    public function eliminar()
+    {
+        $f3 = \Base::instance();
+        $id = filter_var($f3->get('PARAMS.id'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1]
+        ]);
+
+        if ($id === false || !Csrf::validateToken((string)($_POST['csrf_token'] ?? ''))) {
+            $f3->set('error', 'La solicitud de eliminación no es válida.');
+            $this->index();
+            return;
+        }
+
+        try {
+            $nota = Nota::getById($id);
+            if (!$nota) {
+                $f3->set('error', 'No se encontró la nota.');
+                $this->index();
+                return;
+            }
+            Nota::delete($id);
+            $f3->set('success', 'Nota eliminada permanentemente.');
+            $this->mostrarHistorial((int)$nota['id_alumno']);
+        } catch (\PDOException $error) {
+            if (($error->errorInfo[1] ?? null) === 1142) {
+                $f3->set('error', 'La cuenta MySQL de la aplicación necesita permiso DELETE. Ejecuta sql/habilitar_eliminacion.sql con un administrador MySQL.');
+            } else {
+                $f3->set('error', 'No se pudo eliminar la nota por un error de base de datos.');
+            }
             $this->index();
         }
     }

@@ -382,6 +382,73 @@ body {
     box-shadow: 0 0 0 3px rgba(166, 91, 229, 0.1);
 }
 
+.avatar-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.student-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    text-align: left;
+}
+
+.student-profile-avatar {
+    flex: 0 0 150px;
+    width: 150px;
+    height: 150px;
+}
+
+.student-profile-avatar > .foto-alumno-lg {
+    display: block;
+}
+
+.student-profile-avatar > .foto-alumno-lg[hidden] {
+    display: none;
+}
+
+.student-profile-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.photo-preview {
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.photo-preview > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+}
+
+.student-profile-info {
+    min-width: 0;
+}
+
+@media (max-width: 575.98px) {
+    .student-profile-avatar {
+        flex-basis: 96px;
+        width: 96px;
+        height: 96px;
+    }
+
+    .student-profile-avatar > .foto-alumno-lg {
+        width: 96px;
+        height: 96px;
+    }
+}
+
 .auth-page {
     display: flex;
     align-items: center;

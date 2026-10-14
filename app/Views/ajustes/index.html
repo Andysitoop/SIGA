@@ -96,6 +96,7 @@
                         </td>
                         <td class="text-end">
                             <check if="{{ @usuario.id_usuario != @current_user_id }}">
+                                <div class="d-inline-flex gap-1">
                                 <check if="{{ @usuario.activo == 1 }}">
                                     <form class="d-inline" action="/ajustes/usuarios/{{ @usuario.id_usuario }}/estado/desactivar" method="POST" data-account-confirm>
                                         <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
@@ -107,6 +108,11 @@
                                         <button class="btn btn-sm btn-outline-primary account-action" type="submit" data-i18n="Activar">Activar</button>
                                     </form>
                                 </check>
+                                <form class="d-inline" action="/ajustes/usuarios/{{ @usuario.id_usuario }}/eliminar" method="POST" onsubmit="return confirm('¿Eliminar permanentemente esta cuenta?')">
+                                    <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
+                                    <button class="btn btn-sm btn-outline-danger account-action" type="submit" data-i18n="Eliminar">Eliminar</button>
+                                </form>
+                                </div>
                             <else>
                                 <span class="text-muted small" data-i18n="Cuenta actual">Cuenta actual</span>
                             </check>

@@ -393,6 +393,13 @@ DROP TEMPORARY TABLE tmp_plan;
 CREATE USER IF NOT EXISTS 'sistema_app'@'localhost' IDENTIFIED BY 'CambiaEstaClave_2026!';
 ALTER USER 'sistema_app'@'localhost' IDENTIFIED BY 'CambiaEstaClave_2026!';
 GRANT SELECT, INSERT, UPDATE ON sistema_academico.* TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.carreras TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.alumnos TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.notas TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.cursos TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.semestres TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.secciones TO 'sistema_app'@'localhost';
+GRANT DELETE ON sistema_academico.usuarios TO 'sistema_app'@'localhost';
 FLUSH PRIVILEGES;
 
 

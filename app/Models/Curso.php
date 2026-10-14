@@ -76,6 +76,31 @@ class Curso
         $sql = "UPDATE cursos SET activo = 0 WHERE id_curso = ?";
         return Database::execute($sql, [$id]);
     }
+
+    public static function delete(int $id, bool $cascade = false): bool
+    {
+        $pdo = Database::getConnection();
+        $pdo->beginTransaction();
+
+        try {
+            if ($cascade) {
+                $stmt = $pdo->prepare("DELETE FROM notas WHERE id_curso = ?");
+                $stmt->execute([$id]);
+            }
+
+            $stmt = $pdo->prepare("DELETE FROM cursos WHERE id_curso = ?");
+            $stmt->execute([$id]);
+            $deleted = $stmt->rowCount() > 0;
+            $pdo->commit();
+
+            return $deleted;
+        } catch (\Throwable $error) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $error;
+        }
+    }
     
     /**
      * Activa un curso

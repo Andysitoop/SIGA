@@ -65,6 +65,33 @@ class Carrera
         $sql = "UPDATE carreras SET activo = 0 WHERE id_carrera = ?";
         return Database::execute($sql, [$id]);
     }
+
+    public static function delete(int $id, bool $cascade = false): bool
+    {
+        $pdo = Database::getConnection();
+        $pdo->beginTransaction();
+
+        try {
+            if ($cascade) {
+                $stmt = $pdo->prepare("DELETE n FROM notas n INNER JOIN alumnos a ON a.id_alumno = n.id_alumno WHERE a.id_carrera = ?");
+                $stmt->execute([$id]);
+                $stmt = $pdo->prepare("DELETE FROM alumnos WHERE id_carrera = ?");
+                $stmt->execute([$id]);
+            }
+
+            $stmt = $pdo->prepare("DELETE FROM carreras WHERE id_carrera = ?");
+            $stmt->execute([$id]);
+            $deleted = $stmt->rowCount() > 0;
+            $pdo->commit();
+
+            return $deleted;
+        } catch (\Throwable $error) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $error;
+        }
+    }
     
     /**
      * Activa una carrera

@@ -3,12 +3,18 @@
 namespace App\Controllers;
 
 use App\Helpers\DemoReportData;
+use App\Helpers\Access;
 
 /**
  * Controlador para generación de reportes
  */
 class ReporteController
 {
+    public function __construct()
+    {
+        Access::requireLogin();
+    }
+
     /**
      * Muestra el reporte general de alumnos por carrera
      */
@@ -19,7 +25,7 @@ class ReporteController
         $f3 = \Base::instance();
         $idCarrera = $this->filterId($f3->get('GET.id_carrera'));
         $carreras = DemoReportData::careers();
-        $alumnos = DemoReportData::students($idCarrera);
+        $alumnos = $this->withPhotoUrls(DemoReportData::students($idCarrera));
         
         $f3->set('carreras', $carreras);
         $f3->set('alumnos', $alumnos);
@@ -78,14 +84,19 @@ class ReporteController
             $this->alumnos();
             return;
         }
-        
+
+        $config = require __DIR__ . '/../../config/app.php';
+        $alumno['foto_url'] = $alumno['fotografia']
+            ? $config['upload_url'] . $alumno['fotografia']
+            : null;
+
         $notas = DemoReportData::gradesForStudent((int)$id);
         $stats = DemoReportData::studentStats((int)$id);
         
         $f3->set('alumno', $alumno);
         $f3->set('notas', $notas);
         $f3->set('stats', $stats);
-        $f3->set('nota_minima', (require __DIR__ . '/../../config/app.php')['nota_minima_aprobacion']);
+        $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Reporte Individual del Alumno');
         $f3->set('content', 'reportes/alumno.html');
         
@@ -422,5 +433,19 @@ class ReporteController
         }
         echo '</tbody></table></body></html>';
         exit;
+    }
+
+    private function withPhotoUrls(array $students): array
+    {
+        $uploadUrl = (require __DIR__ . '/../../config/app.php')['upload_url'];
+
+        foreach ($students as &$student) {
+            $student['foto_url'] = !empty($student['fotografia'])
+                ? $uploadUrl . $student['fotografia']
+                : null;
+        }
+        unset($student);
+
+        return $students;
     }
 }

@@ -40,9 +40,12 @@
                                     <a href="/notas/{{ @nota.id_nota }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <a href="/notas/{{ @nota.id_nota }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
-                                        <i class="bi bi-x-circle"></i>
-                                    </a>
+                                    <form class="d-inline" action="/notas/{{ @nota.id_nota }}/eliminar" method="POST" onsubmit="return confirmEliminacion(this)">
+                                        <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
+                                        <button type="submit" class="btn btn-outline-danger" title="Eliminar permanentemente">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

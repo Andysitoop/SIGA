@@ -13,16 +13,32 @@
 <div class="row">
     <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-body text-center">
-                <check if="{{ @alumno.foto_url }}">
-                    <img src="{{ @alumno.foto_url }}" alt="Foto" class="foto-alumno-lg mb-3">
-                <else>
-                    <div class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white mx-auto mb-3">
-                        <i class="bi bi-person fs-1"></i>
+            <div class="card-body">
+                <div class="student-profile">
+                    <div class="student-profile-avatar">
+                        <div data-src="{{ @alumno.foto_url }}" id="student-profile-avatar"
+                             class="foto-alumno-lg bg-secondary d-flex align-items-center justify-content-center text-white"
+                             role="img" aria-label="Foto de {{ @alumno.nombres }} {{ @alumno.apellidos }}">
+                            <i class="bi bi-person fs-1" aria-hidden="true"></i>
+                        </div>
                     </div>
-                </check>
-                <h5 class="card-title">{{ @alumno.nombres }} {{ @alumno.apellidos }}</h5>
-                <p class="card-text text-muted">{{ @alumno.nombre_carrera }}</p>
+                    <div class="student-profile-info">
+                        <h5 class="card-title">{{ @alumno.nombres }} {{ @alumno.apellidos }}</h5>
+                        <p class="card-text text-muted mb-0">{{ @alumno.nombre_carrera }}</p>
+                    </div>
+                </div>
+                <script>
+                    (() => {
+                        const avatar = document.getElementById('student-profile-avatar');
+                        if (!avatar.dataset.src) return;
+
+                        const image = new Image();
+                        image.className = 'student-profile-image';
+                        image.alt = avatar.getAttribute('aria-label');
+                        image.onload = () => avatar.replaceChildren(image);
+                        image.src = avatar.dataset.src;
+                    })();
+                </script>
             </div>
         </div>
         

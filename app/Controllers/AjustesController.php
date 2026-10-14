@@ -5,14 +5,13 @@ namespace App\Controllers;
 use App\Helpers\Csrf;
 use App\Helpers\Validation;
 use App\Models\Usuario;
+use App\Helpers\Access;
 
 class AjustesController
 {
     public function index(): void
     {
-        if (!$this->requireLogin()) {
-            return;
-        }
+        Access::requireAdmin();
 
         $f3 = \Base::instance();
         $canManageUsers = ($_SESSION['user_role'] ?? '') === 'admin';
@@ -32,9 +31,7 @@ class AjustesController
 
     public function createUser(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
+        Access::requireAdmin();
 
         if (!Csrf::validateToken((string)($_POST['csrf_token'] ?? ''))) {
             $this->redirectWithError('La sesión del formulario venció. Inténtalo de nuevo.');
@@ -73,9 +70,7 @@ class AjustesController
 
     public function setUserStatus(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
+        Access::requireAdmin();
 
         $f3 = \Base::instance();
         $id = (int)$f3->get('PARAMS.id');
@@ -109,30 +104,42 @@ class AjustesController
         exit;
     }
 
-    private function requireAdmin(): bool
+    public function deleteUser(): void
     {
-        if (!$this->requireLogin()) {
-            return false;
+        Access::requireAdmin();
+
+        $f3 = \Base::instance();
+        $id = filter_var($f3->get('PARAMS.id'), FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1]
+        ]);
+        if ($id === false || !Csrf::validateToken((string)($_POST['csrf_token'] ?? ''))) {
+            $this->redirectWithError('La solicitud no es válida. Inténtalo de nuevo.');
         }
-        if (($_SESSION['user_role'] ?? '') !== 'admin') {
-            header('Location: /');
-            return false;
+        if ($id === (int)$_SESSION['user_id']) {
+            $this->redirectWithError('No puedes eliminar tu propia cuenta.');
         }
 
-        return true;
-    }
-
-    private function requireLogin(): bool
-    {
-        if (!isset($_SESSION)) {
-            session_start();
+        $targetUser = Usuario::getById($id);
+        if (!$targetUser) {
+            $this->redirectWithError('No se encontró la cuenta.');
         }
-        if (($_SESSION['logged_in'] ?? false) !== true) {
-            header('Location: /login');
-            return false;
+        if ($targetUser['rol'] === 'admin'
+            && (int)$targetUser['activo'] === 1
+            && Usuario::countActiveAdmins() <= 1) {
+            $this->redirectWithError('Debe quedar al menos un administrador activo.');
         }
 
-        return true;
+        try {
+            Usuario::delete($id);
+        } catch (\PDOException $error) {
+            if (($error->errorInfo[1] ?? null) === 1142) {
+                $this->redirectWithError('La cuenta MySQL de la aplicación necesita permiso DELETE. Ejecuta sql/habilitar_eliminacion.sql con un administrador MySQL.');
+            }
+            throw $error;
+        }
+        $_SESSION['flash_success'] = 'Cuenta eliminada permanentemente.';
+        header('Location: /ajustes');
+        exit;
     }
 
     private function redirectWithError(string $message): never

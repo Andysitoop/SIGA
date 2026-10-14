@@ -65,6 +65,31 @@ class Semestre
         $sql = "UPDATE semestres SET activo = 0 WHERE id_semestre = ?";
         return Database::execute($sql, [$id]);
     }
+
+    public static function delete(int $id, bool $cascade = false): bool
+    {
+        $pdo = Database::getConnection();
+        $pdo->beginTransaction();
+
+        try {
+            if ($cascade) {
+                $stmt = $pdo->prepare("DELETE FROM notas WHERE id_semestre = ?");
+                $stmt->execute([$id]);
+            }
+
+            $stmt = $pdo->prepare("DELETE FROM semestres WHERE id_semestre = ?");
+            $stmt->execute([$id]);
+            $deleted = $stmt->rowCount() > 0;
+            $pdo->commit();
+
+            return $deleted;
+        } catch (\Throwable $error) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            throw $error;
+        }
+    }
     
     /**
      * Activa un semestre

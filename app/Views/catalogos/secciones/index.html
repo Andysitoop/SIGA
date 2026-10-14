@@ -38,15 +38,16 @@
                                     <a href="/secciones/{{ @seccion.id_seccion }}/editar" class="btn btn-outline-primary" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <check if="{{ @seccion.activo }}">
-                                        <a href="/secciones/{{ @seccion.id_seccion }}/desactivar" class="btn btn-outline-danger" title="Desactivar" onclick="return confirmDesactivacion()">
-                                            <i class="bi bi-x-circle"></i>
-                                        </a>
-                                    <else>
-                                        <a href="/secciones/{{ @seccion.id_seccion }}/activar" class="btn btn-outline-success" title="Activar">
-                                            <i class="bi bi-check-circle"></i>
-                                        </a>
-                                    </check>
+                                    <form class="d-inline" action="/secciones/{{ @seccion.id_seccion }}/eliminar" method="POST" onsubmit="return confirmEliminacion(this)">
+                                        <input type="hidden" name="csrf_token" value="{{ @csrf_token }}">
+                                        <select class="form-select form-select-sm" name="delete_mode" aria-label="Qué hacer con las notas asociadas">
+                                            <option value="restrict" data-i18n="No borrar notas">No borrar notas</option>
+                                            <option value="cascade" data-i18n="Borrar también notas">Borrar también notas</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-outline-danger" title="Eliminar permanentemente">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
