@@ -38,9 +38,4 @@ class Csrf
     /**
      * Genera el campo oculto del token CSRF para formularios
      */
-    public static function field(): string
-    {
-        $token = self::generateToken();
-        return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars($token) . '">';
-    }
 }

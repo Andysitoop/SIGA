@@ -194,22 +194,6 @@ class CatalogoController
     /**
      * Desactiva una carrera
      */
-    public function carrerasDesactivar()
-    {
-        if (!isset($_SESSION)) session_start();
-        
-        $f3 = \Base::instance();
-        $id = $f3->get('PARAMS.id');
-        
-        try {
-            Carrera::deactivate($id);
-            $f3->set('success', 'Carrera desactivada exitosamente');
-        } catch (\Exception $e) {
-            $f3->set('error', 'Error al desactivar la carrera: ' . $e->getMessage());
-        }
-        
-        $this->carreras();
-    }
     
     /**
      * Activa una carrera
@@ -413,22 +397,6 @@ class CatalogoController
     /**
      * Desactiva un curso
      */
-    public function cursosDesactivar()
-    {
-        if (!isset($_SESSION)) session_start();
-        
-        $f3 = \Base::instance();
-        $id = $f3->get('PARAMS.id');
-        
-        try {
-            Curso::deactivate($id);
-            $f3->set('success', 'Curso desactivado exitosamente');
-        } catch (\Exception $e) {
-            $f3->set('error', 'Error al desactivar el curso: ' . $e->getMessage());
-        }
-        
-        $this->cursos();
-    }
     
     /**
      * Activa un curso
@@ -614,22 +582,6 @@ class CatalogoController
     /**
      * Desactiva un semestre
      */
-    public function semestresDesactivar()
-    {
-        if (!isset($_SESSION)) session_start();
-        
-        $f3 = \Base::instance();
-        $id = $f3->get('PARAMS.id');
-        
-        try {
-            Semestre::deactivate($id);
-            $f3->set('success', 'Semestre desactivado exitosamente');
-        } catch (\Exception $e) {
-            $f3->set('error', 'Error al desactivar el semestre: ' . $e->getMessage());
-        }
-        
-        $this->semestres();
-    }
     
     /**
      * Activa un semestre
@@ -815,22 +767,6 @@ class CatalogoController
     /**
      * Desactiva una sección
      */
-    public function seccionesDesactivar()
-    {
-        if (!isset($_SESSION)) session_start();
-        
-        $f3 = \Base::instance();
-        $id = $f3->get('PARAMS.id');
-        
-        try {
-            Seccion::deactivate($id);
-            $f3->set('success', 'Sección desactivada exitosamente');
-        } catch (\Exception $e) {
-            $f3->set('error', 'Error al desactivar la sección: ' . $e->getMessage());
-        }
-        
-        $this->secciones();
-    }
     
     /**
      * Activa una sección

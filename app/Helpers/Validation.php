@@ -51,10 +51,6 @@ class Validation
     /**
      * Valida longitud mínima
      */
-    public static function minLength(string $value, int $min): bool
-    {
-        return strlen($value) >= $min;
-    }
     
     /**
      * Valida longitud máxima

@@ -1,212 +1,132 @@
-# Instrucciones de Instalación en Ubuntu
+# Instalación y ejecución en Ubuntu
 
-## Ubicación del Proyecto
+Estos pasos son para una instalación local de desarrollo. Para despliegues públicos, usa HTTPS, desactiva la depuración y configura el servidor web para servir únicamente `public/`.
 
-Si estás usando WSL, el proyecto está en:
-```
-/mnt/c/Users/terra/CascadeProjects/sistema-academico
-```
-
-## 1. Instalar PHP y Extensiones
+## 1. Instalar requisitos
 
 ```bash
 sudo apt update
-sudo apt install php8.1 php8.1-mysql php8.1-mbstring php8.1-xml php8.1-curl php8.1-zip php8.1-finfo
+sudo apt install php-cli php-mysql php-mbstring php-xml php-curl php-zip mysql-server composer
 ```
 
-## 2. Instalar MySQL Server
+Comprueba PHP y las extensiones requeridas:
 
 ```bash
-sudo apt install mysql-server
-sudo mysql_secure_installation
+php -v
+php -m | grep -E 'fileinfo|mbstring|pdo_mysql'
 ```
 
-Durante la instalación:
-- Configurar contraseña de root
-- Seleccionar las opciones recomendadas
+`fileinfo` suele venir habilitada con PHP en Ubuntu. Si falta, instala el paquete PHP apropiado para tu versión de Ubuntu.
 
-## 3. Instalar Composer
+## 2. Instalar dependencias y configurar el entorno
 
-```bash
-curl -sS https://getcomposer.org/installer | php
-sudo mv composer.phar /usr/local/bin/composer
-```
-
-## 4. Navegar al Proyecto
+Desde el directorio del proyecto:
 
 ```bash
-cd /mnt/c/Users/terra/CascadeProjects/sistema-academico
-```
-
-## 5. Instalar Dependencias
-
-```bash
+cd ~/Desktop/SIGA
 composer install
-```
-
-## 6. Configurar Archivo .env
-
-```bash
 cp .env.example .env
 nano .env
 ```
 
-Editar con tus credenciales:
-```env
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=sistema_academico
-DB_USER=sistema_app
-DB_PASS=CambiaEstaClave_2026!
+Configura `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` y `DB_PASS`. La contraseña debe coincidir con la definida para `sistema_app` en los scripts SQL. No uses credenciales de ejemplo fuera de una instalación local.
 
-APP_NAME=Sistema Académico
-APP_ENV=development
-APP_DEBUG=true
-APP_URL=http://localhost:8000
+## 3. Crear o actualizar la base de datos
 
-NOTA_MINIMA_APROBACION=60
-NOTA_MAXIMA=100
+### Instalación nueva
 
-MAX_FILE_SIZE=2097152
-ALLOWED_IMAGE_TYPES=image/jpeg,image/jpg,image/png
-
-PAGINATION_LIMIT=20
-```
-
-## 7. Crear Base de Datos
+El script final crea la base, carga datos iniciales y crea/configura el usuario de aplicación. **Borra y vuelve a crear la base de datos; no lo ejecutes si quieres conservar datos.**
 
 ```bash
-sudo mysql -u root -p < sql/sistema_academico_final.sql
+sudo mysql < sql/sistema_academico_final.sql
 ```
 
-O desde el cliente MySQL:
-```bash
-sudo mysql -u root -p
-```
-```sql
-source /mnt/c/Users/terra/CascadeProjects/sistema-academico/sql/sistema_academico_final.sql
-exit
-```
+En Ubuntu, MySQL suele autenticar `root` mediante `sudo` y socket local. Si tu servidor está configurado para autenticar con contraseña, usa `mysql -u root -p < sql/sistema_academico_final.sql`.
 
-La contraseña de `DB_PASS` debe coincidir con la definida para `sistema_app` en `sql/sistema_academico_final.sql`. Cambia el valor de ejemplo en ambos lugares antes de instalar en un entorno compartido.
+### Base existente que se debe conservar
 
-Si la base ya existe, no vuelvas a importar el script final porque elimina y recrea la base. Actualízala sin perder registros existentes:
+Aplica la migración de usuarios y permisos:
 
 ```bash
-sudo mysql -u root -p sistema_academico < sql/migrate_users.sql
+sudo mysql sistema_academico < sql/migrate_users.sql
 ```
 
-## 8. Crear el primer administrador
+Si no necesitas migrar usuarios y solo quieres otorgar los permisos para eliminaciones permanentes:
 
-Desde la raíz del proyecto, ejecuta el provisionador. Solicita nombre, correo y una contraseña de al menos 12 caracteres:
+```bash
+sudo mysql < sql/habilitar_eliminacion.sql
+```
+
+Ambos comandos requieren una cuenta MySQL administrativa. Si `sudo mysql` no funciona, solicita a la persona administradora del servidor que ejecute el script.
+
+## 4. Crear el primer administrador
+
+Ejecuta desde la raíz del proyecto:
 
 ```bash
 php create-admin.php
 ```
 
-La contraseña se guarda con `password_hash()`. Después inicia sesión con ese correo; la administración de cuentas está disponible en Ajustes.
+El asistente solicita nombre, correo y contraseña de al menos 12 caracteres. La contraseña se almacena con un hash; no hay una contraseña predeterminada. Después, inicia sesión con la cuenta creada.
 
-## 9. Configurar Permisos
+## 5. Permitir escritura de fotografías y caché
+
+PHP necesita poder escribir en `public/uploads/` y `tmp/`. Crea las carpetas si faltan:
 
 ```bash
-chmod -R 755 public/uploads
-chmod -R 755 tmp
+mkdir -p public/uploads tmp
 ```
 
-## 10. Ejecutar el Servidor
+Para el servidor de desarrollo, concede acceso de escritura al usuario que ejecutará PHP. Para Apache, ajusta el propietario al usuario del servicio (usualmente `www-data`) en esas dos carpetas. Evita permisos globales como `777`; `public/uploads/` contiene fotografías de alumnos, no caché descartable.
+
+## 6. Iniciar la aplicación
 
 ```bash
 cd public
 php -S localhost:8000
 ```
 
-## 11. Acceder al Sistema
+Abre <http://localhost:8000>. Detén el servidor con `Ctrl+C`.
 
-Abrir el navegador en:
-```
-http://localhost:8000
-```
+Para Apache o Nginx, configura `public/` como document root. No publiques la raíz del proyecto: contiene configuración y scripts que no son recursos web.
 
-## Solución de Problemas Comunes
+## Roles
 
-### Error: "php: command not found"
+- El administrador puede administrar alumnos, notas, catálogos y cuentas.
+- Un usuario normal solo puede consultar las estadísticas del dashboard y ver o descargar reportes.
+- Las eliminaciones permanentes necesitan los permisos MySQL `DELETE` declarados en `sql/habilitar_eliminacion.sql`. En cada borrado relacionado, el administrador puede optar por bloquear la operación o eliminar también los registros dependientes.
+
+## Solución de problemas
+
+### `ERROR 1698 (28000): Access denied for user 'root'@'localhost'`
+
+En Ubuntu, intenta ejecutar el script con autenticación por socket:
+
 ```bash
-sudo apt install php8.1-cli
+sudo mysql < sql/habilitar_eliminacion.sql
 ```
 
-### Error: "mysql: command not found"
-```bash
-sudo apt install mysql-client
-```
+Ingresa la contraseña de tu usuario Ubuntu si `sudo` la solicita. Si tu cuenta no tiene permisos de `sudo`, pide a un administrador de MySQL que ejecute el comando.
 
-### Error de conexión a MySQL
-Verificar que MySQL esté corriendo:
+### No se puede conectar a MySQL
+
 ```bash
 sudo systemctl status mysql
-```
-
-Iniciar MySQL si no está corriendo:
-```bash
 sudo systemctl start mysql
 ```
 
-### Error de permisos en uploads
-```bash
-sudo chown -R $USER:$USER public/uploads
-chmod -R 755 public/uploads
-```
+Comprueba también que las credenciales `DB_*` de `.env` coincidan con el usuario y la base creados en MySQL.
 
-### Error de extensión fileinfo
-```bash
-sudo apt install php8.1-finfo
-```
+### `php` o `mysql` no se encuentra
 
-## Usar Apache (Opcional)
-
-Si prefieres usar Apache en lugar del servidor PHP integrado:
+Instala el paquete correspondiente:
 
 ```bash
-sudo apt install apache2 libapache2-mod-php8.1
+sudo apt install php-cli mysql-client
 ```
 
-Configurar VirtualHost:
-```bash
-sudo nano /etc/apache2/sites-available/sistema-academico.conf
-```
+### No se pueden guardar fotografías o plantillas compiladas
 
-Agregar:
-```apache
-<VirtualHost *:80>
-    ServerName sistema-academico.local
-    DocumentRoot /mnt/c/Users/terra/CascadeProjects/sistema-academico/public
-    
-    <Directory /mnt/c/Users/terra/CascadeProjects/sistema-academico/public>
-        AllowOverride All
-        Require all granted
-    </Directory>
-    
-    ErrorLog ${APACHE_LOG_DIR}/sistema-academico_error.log
-    CustomLog ${APACHE_LOG_DIR}/sistema-academico_access.log combined
-</VirtualHost>
-```
+Confirma que el usuario que ejecuta PHP tenga permiso de escritura en `public/uploads/` y `tmp/`. No es necesario conservar las plantillas compiladas: Fat-Free las genera de nuevo.
 
-Habilitar el sitio:
-```bash
-sudo a2ensite sistema-academico.conf
-sudo a2enmod rewrite
-sudo systemctl restart apache2
-```
-
-Agregar al archivo hosts:
-```bash
-sudo nano /etc/hosts
-```
-Agregar:
-```
-127.0.0.1 sistema-academico.local
-```
-
-Acceder desde:
-```
-http://sistema-academico.local
-```
+Para información sobre rutas, esquema SQL, roles y variables de configuración, consulta [documentacion.md](documentacion.md).
