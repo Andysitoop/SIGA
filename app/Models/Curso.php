@@ -127,6 +127,23 @@ class Curso
         $result = Database::queryOne($sql, $params);
         return (int)($result['total'] ?? 0) > 0;
     }
+
+    /**
+     * Verifica si ya existe un curso activo con el mismo nombre
+     */
+    public static function activeNameExists(string $nombre, ?int $excludeId = null): bool
+    {
+        $sql = "SELECT COUNT(*) as total FROM cursos WHERE nombre = ? AND activo = 1";
+        $params = [$nombre];
+
+        if ($excludeId !== null) {
+            $sql .= " AND id_curso != ?";
+            $params[] = $excludeId;
+        }
+
+        $result = Database::queryOne($sql, $params);
+        return (int)($result['total'] ?? 0) > 0;
+    }
     
     /**
      * Cuenta el total de cursos

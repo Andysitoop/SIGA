@@ -93,15 +93,15 @@
                 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="nota" class="form-label">Nota * ({{ @nota_minima }} - {{ @nota_maxima }})</label>
+                        <label for="nota" class="form-label">Nota * (0 - {{ @nota_maxima }})</label>
                         <input type="number" class="form-control" id="nota" name="nota" 
                                <check if="{{ @nota }}">
                                    value="{{ @nota.nota }}"
                                <else>
                                    value="{{ @data.nota }}"
                                </check>
-                               min="{{ @nota_minima }}" max="{{ @nota_maxima }}" step="0.01" required>
-                        <div class="form-text">Nota mínima para aprobar: {{ @nota_minima }}</div>
+                               min="0" max="{{ @nota_maxima }}" step="0.01" required>
+                        <div class="form-text">Una nota menor que {{ @nota_minima }} se considera reprobada.</div>
                     </div>
                 </div>
             </div>

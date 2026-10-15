@@ -77,25 +77,26 @@ class ReporteController
         
         $f3 = \Base::instance();
         $id = $f3->get('PARAMS.id');
-        $alumno = DemoReportData::student((int)$id);
-        
-        if (!$alumno) {
-            $f3->set('error', 'Alumno no encontrado');
+        $report = $this->studentReportData((int)$id, $f3);
+        if ($report === null) {
             $this->alumnos();
             return;
         }
 
         $config = require __DIR__ . '/../../config/app.php';
+        $alumno = $report['alumno'];
         $alumno['foto_url'] = $alumno['fotografia']
             ? $config['upload_url'] . $alumno['fotografia']
             : null;
 
-        $notas = DemoReportData::gradesForStudent((int)$id);
+        $notas = $report['notas'];
         $stats = DemoReportData::studentStats((int)$id);
         
         $f3->set('alumno', $alumno);
         $f3->set('notas', $notas);
         $f3->set('stats', $stats);
+        $f3->set('filtro_estado', $report['status']);
+        $f3->set('filtro_estado_label', $report['status_label']);
         $f3->set('nota_minima', $config['nota_minima_aprobacion']);
         $f3->set('title', 'Reporte Individual del Alumno');
         $f3->set('content', 'reportes/alumno.html');
@@ -179,19 +180,19 @@ class ReporteController
         
         $f3 = \Base::instance();
         $id = $f3->get('PARAMS.id');
-        $alumno = DemoReportData::student((int)$id);
-        
-        if (!$alumno) {
-            $f3->set('error', 'Alumno no encontrado');
+        $report = $this->studentReportData((int)$id, $f3);
+        if ($report === null) {
             $this->alumnos();
             return;
         }
-        
-        $notas = DemoReportData::gradesForStudent((int)$id);
-        $stats = DemoReportData::studentStats((int)$id);
+
+        $alumno = $report['alumno'];
+        $notas = $report['notas'];
+        $stats = $report['stats'];
         $rows = [
             ['REPORTE INDIVIDUAL DEL ALUMNO'],
             ['Generado el:', date('d/m/Y H:i')],
+            ['Filtro de notas:', $report['status_label']],
             [],
             ['Nombres:', $alumno['nombres']],
             ['Apellidos:', $alumno['apellidos']],
@@ -200,7 +201,7 @@ class ReporteController
             ['Fecha de Registro:', $this->formatDate($alumno['fecha_registro'], true)],
             [],
             ['ESTADÍSTICAS'],
-            ['Promedio General:', $stats['promedio_general']],
+            ['Promedio de notas incluidas:', $stats['promedio_general']],
             ['Cursos Aprobados:', $stats['cursos_aprobados']],
             ['Cursos Reprobados:', $stats['cursos_reprobados']],
             ['Total de Cursos:', $stats['total_cursos']],
@@ -226,7 +227,7 @@ class ReporteController
             ];
         }
 
-        $filename = 'reporte_alumno_' . preg_replace('/[^a-z0-9_-]/i', '_', $alumno['apellidos']) . '_' . date('Y-m-d') . '.csv';
+        $filename = 'reporte_alumno_' . preg_replace('/[^a-z0-9_-]/i', '_', $alumno['apellidos']) . '_' . $report['status'] . '_' . date('Y-m-d') . '.csv';
         $this->downloadCsv($filename, $rows);
     }
 
@@ -234,15 +235,15 @@ class ReporteController
     {
         $f3 = \Base::instance();
         $id = (int)$f3->get('PARAMS.id');
-        $alumno = DemoReportData::student($id);
-        if (!$alumno) {
-            $f3->set('error', 'Alumno no encontrado');
+        $report = $this->studentReportData($id, $f3);
+        if ($report === null) {
             $this->alumnos();
             return;
         }
 
-        $notas = DemoReportData::gradesForStudent($id);
-        $stats = DemoReportData::studentStats($id);
+        $alumno = $report['alumno'];
+        $notas = $report['notas'];
+        $stats = $report['stats'];
         $rows = array_map(static fn(array $nota): array => [
             $nota['nombre_semestre'],
             $nota['nombre_seccion'],
@@ -252,18 +253,19 @@ class ReporteController
             $nota['aprobado'] ? 'Aprobado' : 'Reprobado',
             $nota['fecha_registro'],
         ], $notas);
-        $filename = 'reporte_alumno_' . preg_replace('/[^a-z0-9_-]/i', '_', $alumno['apellidos']) . '_' . date('Y-m-d') . '.doc';
+        $filename = 'reporte_alumno_' . preg_replace('/[^a-z0-9_-]/i', '_', $alumno['apellidos']) . '_' . $report['status'] . '_' . date('Y-m-d') . '.doc';
 
         $this->downloadDoc(
             $filename,
             'Reporte Individual del Alumno',
             [
                 ['Generado el', date('d/m/Y H:i')],
+                ['Filtro de notas', $report['status_label']],
                 ['Alumno', $alumno['apellidos'] . ', ' . $alumno['nombres']],
                 ['Carrera', $alumno['nombre_carrera']],
                 ['Fecha de nacimiento', $this->formatDate($alumno['fecha_nacimiento'])],
                 ['Fecha de registro', $this->formatDate($alumno['fecha_registro'], true)],
-                ['Promedio general', $stats['promedio_general']],
+                ['Promedio de notas incluidas', $stats['promedio_general']],
                 ['Cursos aprobados', $stats['cursos_aprobados']],
                 ['Cursos reprobados', $stats['cursos_reprobados']],
                 ['Total de cursos', $stats['total_cursos']],
@@ -271,6 +273,53 @@ class ReporteController
             ['Semestre', 'Sección', 'Código', 'Curso', 'Nota', 'Estado', 'Fecha'],
             $rows
         );
+    }
+
+    private function studentReportData(int $id, object $f3): ?array
+    {
+        $status = $f3->get('GET.estado') ?? 'general';
+        $statusLabels = [
+            'general' => 'Notas generales',
+            'aprobadas' => 'Notas aprobadas',
+            'reprobadas' => 'Notas reprobadas',
+        ];
+
+        if (!is_string($status) || !isset($statusLabels[$status])) {
+            $f3->set('error', 'El filtro de notas seleccionado no es válido.');
+            return null;
+        }
+
+        $alumno = DemoReportData::student($id);
+        if (!$alumno) {
+            $f3->set('error', 'Alumno no encontrado');
+            return null;
+        }
+
+        $notas = DemoReportData::gradesForStudent($id);
+        if ($status === 'aprobadas') {
+            $notas = array_values(array_filter($notas, static fn(array $nota): bool => $nota['aprobado']));
+        } elseif ($status === 'reprobadas') {
+            $notas = array_values(array_filter($notas, static fn(array $nota): bool => !$nota['aprobado']));
+        }
+
+        $approved = count(array_filter($notas, static fn(array $nota): bool => $nota['aprobado']));
+        $total = count($notas);
+        $average = $total === 0
+            ? 0
+            : array_sum(array_column($notas, 'nota')) / $total;
+
+        return [
+            'alumno' => $alumno,
+            'notas' => $notas,
+            'stats' => [
+                'promedio_general' => round($average, 2),
+                'cursos_aprobados' => $approved,
+                'cursos_reprobados' => $total - $approved,
+                'total_cursos' => $total,
+            ],
+            'status' => $status,
+            'status_label' => $statusLabels[$status],
+        ];
     }
 
     public function exportarAlumnosCsv(): void

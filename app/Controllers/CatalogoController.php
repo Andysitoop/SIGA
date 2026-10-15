@@ -249,7 +249,10 @@ class CatalogoController
         
         $f3 = \Base::instance();
         $f3->set('curso', null);
-        $f3->set('data', []);
+        if (!$f3->get('form_submitted')) {
+            $f3->set('data', ['codigo' => '', 'nombre' => '', 'activo' => 1]);
+            $f3->set('form_submitted', false);
+        }
         $f3->set('form_action', '/cursos/guardar');
         $f3->set('title', 'Nuevo Curso');
         $f3->set('content', 'catalogos/cursos/form.html');
@@ -276,6 +279,8 @@ class CatalogoController
         
         // Validaciones
         $errors = [];
+        $formData = $_POST;
+        $formData['activo'] = isset($_POST['activo']) ? 1 : 0;
         
         if (!Validation::required($_POST['codigo'] ?? '')) {
             $errors[] = 'El código es obligatorio';
@@ -288,10 +293,15 @@ class CatalogoController
         if (Curso::codeExists($_POST['codigo'])) {
             $errors[] = 'El código ya existe';
         }
+
+        if (isset($_POST['activo']) && Curso::activeNameExists($_POST['nombre'] ?? '')) {
+            $errors[] = 'Ya existe un curso activo con ese nombre';
+        }
         
         if (!empty($errors)) {
             $f3->set('error', implode('<br>', $errors));
-            $f3->set('data', $_POST);
+            $f3->set('data', $formData);
+            $f3->set('form_submitted', true);
             $this->cursosNuevo();
             return;
         }
@@ -306,8 +316,14 @@ class CatalogoController
             $f3->set('success', 'Curso creado exitosamente');
             $this->cursos();
         } catch (\Exception $e) {
-            $f3->set('error', 'Error al crear el curso: ' . $e->getMessage());
-            $f3->set('data', $_POST);
+            $f3->set(
+                'error',
+                $this->isDuplicateActiveCourseName($e)
+                    ? 'Ya existe un curso activo con ese nombre'
+                    : 'Error al crear el curso: ' . $e->getMessage()
+            );
+            $f3->set('data', $formData);
+            $f3->set('form_submitted', true);
             $this->cursosNuevo();
         }
     }
@@ -331,6 +347,10 @@ class CatalogoController
         }
         
         $f3->set('curso', $curso);
+        if (!$f3->get('form_submitted')) {
+            $f3->set('data', $curso);
+            $f3->set('form_submitted', false);
+        }
         $f3->set('form_action', '/cursos/' . $curso['id_curso'] . '/actualizar');
         $f3->set('title', 'Editar Curso');
         $f3->set('content', 'catalogos/cursos/form.html');
@@ -358,6 +378,8 @@ class CatalogoController
         
         // Validaciones
         $errors = [];
+        $formData = $_POST;
+        $formData['activo'] = isset($_POST['activo']) ? 1 : 0;
         
         if (!Validation::required($_POST['codigo'] ?? '')) {
             $errors[] = 'El código es obligatorio';
@@ -370,10 +392,15 @@ class CatalogoController
         if (Curso::codeExists($_POST['codigo'], $id)) {
             $errors[] = 'El código ya existe';
         }
+
+        if (isset($_POST['activo']) && Curso::activeNameExists($_POST['nombre'] ?? '', (int)$id)) {
+            $errors[] = 'Ya existe otro curso activo con ese nombre';
+        }
         
         if (!empty($errors)) {
             $f3->set('error', implode('<br>', $errors));
-            $f3->set('data', $_POST);
+            $f3->set('data', $formData);
+            $f3->set('form_submitted', true);
             $this->cursosEditar();
             return;
         }
@@ -388,8 +415,14 @@ class CatalogoController
             $f3->set('success', 'Curso actualizado exitosamente');
             $this->cursos();
         } catch (\Exception $e) {
-            $f3->set('error', 'Error al actualizar el curso: ' . $e->getMessage());
-            $f3->set('data', $_POST);
+            $f3->set(
+                'error',
+                $this->isDuplicateActiveCourseName($e)
+                    ? 'Ya existe otro curso activo con ese nombre'
+                    : 'Error al actualizar el curso: ' . $e->getMessage()
+            );
+            $f3->set('data', $formData);
+            $f3->set('form_submitted', true);
             $this->cursosEditar();
         }
     }
@@ -409,10 +442,22 @@ class CatalogoController
         $id = $f3->get('PARAMS.id');
         
         try {
+            $curso = Curso::getById((int)$id);
+            if ($curso && Curso::activeNameExists($curso['nombre'], (int)$id)) {
+                $f3->set('error', 'No se puede activar el curso: ya existe otro curso activo con ese nombre');
+                $this->cursos();
+                return;
+            }
+
             Curso::activate($id);
             $f3->set('success', 'Curso activado exitosamente');
         } catch (\Exception $e) {
-            $f3->set('error', 'Error al activar el curso: ' . $e->getMessage());
+            $f3->set(
+                'error',
+                $this->isDuplicateActiveCourseName($e)
+                    ? 'No se puede activar el curso: ya existe otro curso activo con ese nombre'
+                    : 'Error al activar el curso: ' . $e->getMessage()
+            );
         }
         
         $this->cursos();
@@ -791,6 +836,13 @@ class CatalogoController
     public function seccionesEliminar()
     {
         $this->eliminarCatalogo(Seccion::class, 'sección', 'secciones');
+    }
+
+    private function isDuplicateActiveCourseName(\Exception $error): bool
+    {
+        return $error instanceof \PDOException
+            && (int)($error->errorInfo[1] ?? 0) === 1062
+            && str_contains((string)($error->errorInfo[2] ?? ''), 'uq_cursos_nombre_activo');
     }
 
     private function eliminarCatalogo(string $model, string $entity, string $listMethod): void

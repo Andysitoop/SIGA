@@ -222,6 +222,6 @@ Carreras, cursos, semestres y secciones usan el mismo patrón: `GET /{catalogo}`
 
 ## 11. Exportaciones y notas
 
-Los reportes de notas marcan aprobación según `NOTA_MINIMA_APROBACION`. Los CSV se generan con UTF-8 y BOM para facilitar su apertura en hojas de cálculo. Los archivos `.doc` contienen HTML compatible con Word; no son archivos `.docx` ni PDF.
+Las notas se registran entre 0 y 100; una nota menor que `NOTA_MINIMA_APROBACION` (60 por defecto) se considera reprobada. En el reporte individual se puede filtrar el historial en pantalla y descargar el historial completo o solo las notas aprobadas o reprobadas en CSV y DOC. Los CSV se generan con UTF-8 y BOM para facilitar su apertura en hojas de cálculo. Los archivos `.doc` contienen HTML compatible con Word; no son archivos `.docx` ni PDF.
 
 La escala permitida es de 0 a `NOTA_MAXIMA` en la aplicación, y la base limita `nota` a 0–100. Si se modifica la escala, conserva ambas reglas compatibles.

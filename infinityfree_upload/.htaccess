@@ -1,0 +1,8 @@
+RewriteEngine On
+
+RewriteRule ^(?:app|config|sql|vendor|tmp)(?:/|$) - [F,L,NC]
+RewriteRule (^|/)\.(?!well-known(?:/|$)) - [F,L]
+RewriteRule ^(?:composer\.(?:json|lock)|create-admin\.php|README\.md|documentacion\.md|INSTRUCCIONES_UBUNTU\.md)$ - [F,L,NC]
+
+RewriteRule ^public/ - [L]
+RewriteRule ^(.*)$ public/$1 [L]
