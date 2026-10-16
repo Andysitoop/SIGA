@@ -130,3 +130,5 @@ sudo apt install php-cli mysql-client
 Confirma que el usuario que ejecuta PHP tenga permiso de escritura en `public/uploads/` y `tmp/`. No es necesario conservar las plantillas compiladas: Fat-Free las genera de nuevo.
 
 Para información sobre rutas, esquema SQL, roles y variables de configuración, consulta [documentacion.md](documentacion.md).
+
+Para publicar en otros entornos (Apache, Nginx, hosting compartido, InfinityFree o Windows), consulta [PUBLICACION_PLATAFORMAS.md](PUBLICACION_PLATAFORMAS.md).

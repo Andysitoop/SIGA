@@ -16,7 +16,7 @@ return [
     'url' => $_ENV['APP_URL'] ?? 'http://localhost:8000',
     
     // Configuración de notas
-    'nota_minima_aprobacion' => (int)($_ENV['NOTA_MINIMA_APROBACION'] ?? 60),
+    'nota_minima_aprobacion' => (int)($_ENV['NOTA_MINIMA_APROBACION'] ?? 61),
     'nota_maxima' => (int)($_ENV['NOTA_MAXIMA'] ?? 100),
     
     // Configuración de archivos

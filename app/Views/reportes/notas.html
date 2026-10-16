@@ -1,10 +1,10 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Reporte de Notas</h1>
     <div class="btn-toolbar mb-2 mb-md-0">
-        <a href="/reportes/notas/exportar-csv?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}" class="btn btn-outline-success me-2">
+        <a href="/reportes/notas/exportar-csv?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}&estado={{ @estado }}" class="btn btn-outline-success me-2">
             <i class="bi bi-file-earmark-spreadsheet me-1"></i> Exportar CSV
         </a>
-        <a href="/reportes/notas/exportar-doc?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}" class="btn btn-primary">
+        <a href="/reportes/notas/exportar-doc?id_carrera={{ @id_carrera }}&id_curso={{ @id_curso }}&id_seccion={{ @id_seccion }}&id_semestre={{ @id_semestre }}&estado={{ @estado }}" class="btn btn-primary">
             <i class="bi bi-file-earmark-word me-1"></i> Exportar DOC
         </a>
     </div>
@@ -13,7 +13,7 @@
 <div class="card mb-4">
     <div class="card-body">
         <form action="/reportes/notas" method="GET" class="row g-3">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <select class="form-select" name="id_carrera">
                     <option value="">Todas las carreras</option>
                     <repeat group="{{ @carreras }}" value="{{ @carrera }}">
@@ -24,7 +24,7 @@
                     </repeat>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <select class="form-select" name="id_curso">
                     <option value="">Todos los cursos</option>
                     <repeat group="{{ @cursos }}" value="{{ @curso }}">
@@ -58,6 +58,13 @@
                 </select>
             </div>
             <div class="col-md-2">
+                <select class="form-select" name="estado" aria-label="Filtrar por estado de aprobación">
+                    <option value="todos" <check if="{{ @estado == 'todos' }}">selected</check>>Aprobados y reprobados</option>
+                    <option value="aprobados" <check if="{{ @estado == 'aprobados' }}">selected</check>>Solo aprobados</option>
+                    <option value="reprobados" <check if="{{ @estado == 'reprobados' }}">selected</check>>Solo reprobados</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-filter"></i> Filtrar
                 </button>
@@ -65,6 +72,8 @@
         </form>
     </div>
 </div>
+
+<p class="text-muted small mb-3">Escala de notas: 0 a 100. Aprueban con {{ @nota_minima }} puntos o más.</p>
 
 <div class="card">
     <div class="card-body p-0">

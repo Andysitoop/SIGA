@@ -4,11 +4,11 @@
         <a href="/reportes/alumnos" class="btn btn-outline-secondary me-2">
             <i class="bi bi-arrow-left"></i> Volver
         </a>
-        <a href="/reportes/alumno/{{ @alumno.id_alumno }}/exportar-csv?estado={{ @filtro_estado }}" class="btn btn-outline-success me-2">
-            <i class="bi bi-file-earmark-spreadsheet me-1"></i> CSV
+        <a href="/reportes/alumno/{{ @alumno.id_alumno }}/exportar-csv?estado={{ @estado }}" class="btn btn-outline-success me-2">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i> Exportar CSV
         </a>
-        <a href="/reportes/alumno/{{ @alumno.id_alumno }}/exportar-doc?estado={{ @filtro_estado }}" class="btn btn-primary">
-            <i class="bi bi-file-earmark-word me-1"></i> DOC
+        <a href="/reportes/alumno/{{ @alumno.id_alumno }}/exportar-doc?estado={{ @estado }}" class="btn btn-primary">
+            <i class="bi bi-file-earmark-word me-1"></i> Exportar DOC
         </a>
     </div>
 </div>
@@ -106,22 +106,29 @@
     </div>
 </div>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label" for="estado-notas">Filtrar historial por estado</label>
+                <select class="form-select" id="estado-notas" name="estado">
+                    <option value="todos" <check if="{{ @estado == 'todos' }}">selected</check>>Aprobados y reprobados</option>
+                    <option value="aprobados" <check if="{{ @estado == 'aprobados' }}">selected</check>>Solo aprobados</option>
+                    <option value="reprobados" <check if="{{ @estado == 'reprobados' }}">selected</check>>Solo reprobados</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-filter"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h6 class="mb-0">Historial Académico: {{ @filtro_estado_label }}</h6>
-            <form action="/reportes/alumno/{{ @alumno.id_alumno }}" method="GET" class="d-flex align-items-center gap-2">
-                <label for="filtro-estado-notas" class="form-label mb-0">Mostrar:</label>
-                <select class="form-select" id="filtro-estado-notas" name="estado">
-                    <option value="general" <check if="{{ @filtro_estado == 'general' }}">selected</check>>Todas las notas</option>
-                    <option value="aprobadas" <check if="{{ @filtro_estado == 'aprobadas' }}">selected</check>>Aprobadas</option>
-                    <option value="reprobadas" <check if="{{ @filtro_estado == 'reprobadas' }}">selected</check>>Reprobadas</option>
-                </select>
-                <button type="submit" class="btn btn-outline-primary text-nowrap">
-                    <i class="bi bi-filter me-1"></i> Filtrar
-                </button>
-            </form>
-        </div>
+        <h6 class="mb-0">Historial Académico: {{ @estado_label }}</h6>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -155,7 +162,7 @@
                     </repeat>
                     <check if="{{ count(@notas) == 0 }}">
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-4">No hay notas que coincidan con el filtro seleccionado</td>
+                            <td colspan="7" class="text-center text-muted py-4">No hay notas registradas</td>
                         </tr>
                     </check>
                 </tbody>

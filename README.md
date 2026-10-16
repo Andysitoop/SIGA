@@ -6,10 +6,11 @@ Aplicación web en PHP para administrar alumnos, carreras, cursos, semestres, se
 
 - Registro, consulta, búsqueda y actualización de alumnos con fotografía opcional.
 - Administración de cursos, carreras, semestres y secciones.
-- Registro de calificaciones e historial académico.
-- Reportes filtrables con exportación a CSV y documento compatible con Word (`.doc`).
+- Registro de notas entre 0 y 100; aprueba desde 61 y reprueba por debajo.
+- Búsqueda de alumnos por nombre/apellido con filtros por carrera, sección y curso.
+- Reportes filtrables por estado académico, con exportación a CSV y documento compatible con Word (`.doc`).
 - Cuentas con roles de administrador y usuario normal.
-- Interfaz adaptable a escritorio y dispositivos móviles, en español e inglés.
+- Interfaz adaptable a escritorio y móviles, en español e inglés, con tema claro y oscuro.
 
 ## Requisitos
 
@@ -28,7 +29,7 @@ composer install
 cp .env.example .env
 ```
 
-Edita `.env` y define las credenciales de MySQL. La contraseña en `DB_PASS` debe coincidir con la configurada para `sistema_app` en el script SQL.
+Edita `.env` y configura los datos de conexión de MySQL para tu entorno. No publiques el archivo `.env` ni copies credenciales reales en archivos versionados o documentación pública.
 
 Para una **base nueva** (el script elimina y vuelve a crear `sistema_academico`), importa el esquema y los datos iniciales:
 
@@ -92,13 +93,16 @@ El script `sql/sistema_academico_final.sql` incluye registros iniciales de ejemp
 ## Documentación
 
 - [Guía técnica, base de datos, rutas y permisos](documentacion.md)
+- [Mapa completo del código fuente](CODIGO_FUENTE.md)
+- [Instrucciones de publicación para distintas plataformas](PUBLICACION_PLATAFORMAS.md)
 - [Instrucciones detalladas para Ubuntu](INSTRUCCIONES_UBUNTU.md)
 
 ## Dependencias, caché y datos locales
 
 - `composer.lock` fija las versiones instaladas; ejecuta `composer install` para restaurarlas.
-- `vendor/` y las plantillas compiladas de `tmp/` son archivos generados y no forman parte del código fuente.
+- `vendor/` y las plantillas compiladas de `tmp/` son archivos generados por Composer y Fat-Free; no forman parte del código fuente propio.
 - Las fotografías en `public/uploads/` son datos locales de la aplicación; no las borres al limpiar la caché.
+- `infinityfree_upload/` es el paquete de despliegue compartido. La aplicación fuente principal está en la raíz del repositorio; conserva sincronizada la copia de producción al publicar cambios.
 
 ## Validación
 

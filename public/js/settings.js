@@ -1,5 +1,6 @@
 (() => {
     const languageKey = 'siga.language';
+    const themeKey = 'siga.theme';
     const originalTitle = document.title;
     const sourceTextNodes = new WeakMap();
     const translations = {
@@ -17,12 +18,20 @@
         'Cerrar Sesión': 'Sign out',
         'PREFERENCIAS DEL SISTEMA': 'SYSTEM PREFERENCES',
         'Administra cuentas reales y preferencias de idioma.': 'Manage real accounts and language preferences.',
+        'Administra cuentas y preferencias de la interfaz.': 'Manage accounts and interface preferences.',
         'Crea perfiles y asigna un nivel de acceso.': 'Create profiles and assign an access level.',
         'Mínimo 12 caracteres.': 'At least 12 characters.',
         'Cuenta actual': 'Current account',
         'No hay cuentas todavía.': 'No accounts yet.',
         'Cuentas': 'Accounts',
         'Idioma': 'Language',
+        'Apariencia': 'Appearance',
+        'Apariencia de la interfaz': 'Interface appearance',
+        'Elige entre el modo claro y el modo oscuro.': 'Choose between light and dark mode.',
+        'Modo claro': 'Light mode',
+        'Modo oscuro': 'Dark mode',
+        'Fondo claro y texto oscuro': 'Light background and dark text',
+        'Fondo oscuro y texto claro': 'Dark background and light text',
         'Cuentas de usuario': 'User accounts',
         'cuentas': 'accounts',
         'Nueva cuenta': 'New account',
@@ -120,6 +129,9 @@
         'Siguiente': 'Next',
         'Página': 'Page',
         'Buscar por nombre o apellido...': 'Search by first or last name...',
+        'Nombre o apellido': 'First or last name',
+        'No se encontraron alumnos con esos criterios.': 'No students matched those criteria.',
+        'Escribe un nombre o apellido, o selecciona uno o más filtros para buscar alumnos.': 'Enter a first or last name, or select one or more filters to search for students.',
         'Seleccione una carrera': 'Select a program',
         'Seleccione un curso': 'Select a course',
         'Seleccione un semestre': 'Select a term',
@@ -132,6 +144,17 @@
     };
 
     const getLanguage = () => localStorage.getItem(languageKey) === 'en' ? 'en' : 'es';
+    const getTheme = () => localStorage.getItem(themeKey) === 'light' ? 'light' : 'dark';
+
+    function applyTheme(theme) {
+        const selectedTheme = theme === 'light' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', selectedTheme);
+        document.querySelectorAll('[data-theme]').forEach((button) => {
+            const selected = button.dataset.theme === selectedTheme;
+            button.classList.toggle('selected', selected);
+            button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+        });
+    }
 
     function translatePage() {
         const language = getLanguage();
@@ -247,7 +270,18 @@
         });
     }
 
+    function initializeTheme() {
+        applyTheme(getTheme());
+        document.querySelectorAll('[data-theme]').forEach((button) => {
+            button.addEventListener('click', () => {
+                localStorage.setItem(themeKey, button.dataset.theme);
+                applyTheme(button.dataset.theme);
+            });
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        initializeTheme();
         translatePage();
         initializeTabs();
         initializeAccounts();

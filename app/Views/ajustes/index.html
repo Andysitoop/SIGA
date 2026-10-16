@@ -2,7 +2,7 @@
     <div>
         <p class="settings-eyebrow mb-2" data-i18n="PREFERENCIAS DEL SISTEMA">PREFERENCIAS DEL SISTEMA</p>
         <h1 class="h2 mb-1" data-i18n="Ajustes">Ajustes</h1>
-        <p class="text-muted mb-0" data-i18n="Administra cuentas reales y preferencias de idioma.">Administra cuentas reales y preferencias de idioma.</p>
+        <p class="text-muted mb-0" data-i18n="Administra cuentas y preferencias de la interfaz.">Administra cuentas y preferencias de la interfaz.</p>
     </div>
 </header>
 
@@ -14,6 +14,9 @@
     </check>
     <button class="settings-tab <check if="{{ @can_manage_users == false }}">active</check>" type="button" role="tab" id="languageTab" aria-controls="languagePanel" aria-selected="<check if="{{ @can_manage_users == false }}">true<else>false</check>" data-settings-tab="language">
         <i class="bi bi-translate me-2"></i><span data-i18n="Idioma">Idioma</span>
+    </button>
+    <button class="settings-tab" type="button" role="tab" id="appearanceTab" aria-controls="appearancePanel" aria-selected="false" data-settings-tab="appearance">
+        <i class="bi bi-circle-half me-2"></i><span data-i18n="Apariencia">Apariencia</span>
     </button>
 </div>
 
@@ -148,5 +151,28 @@
     </div>
     <div class="language-confirmation" id="languageFeedback" role="status" aria-live="polite">
         <i class="bi bi-globe2 me-2"></i><span data-i18n="La preferencia se guarda en este navegador.">La preferencia se guarda en este navegador.</span>
+    </div>
+</section>
+<section class="settings-panel" id="appearancePanel" role="tabpanel" aria-labelledby="appearanceTab" data-settings-panel="appearance" hidden>
+    <div class="settings-section-heading">
+        <div>
+            <h2 class="h5 mb-1" data-i18n="Apariencia de la interfaz">Apariencia de la interfaz</h2>
+            <p class="text-muted mb-0" data-i18n="Elige entre el modo claro y el modo oscuro.">Elige entre el modo claro y el modo oscuro.</p>
+        </div>
+    </div>
+    <div class="language-options" role="group" aria-label="Apariencia" data-i18n-aria="Apariencia">
+        <button class="language-option" type="button" data-theme="light" aria-pressed="false">
+            <span class="language-flag" aria-hidden="true"><i class="bi bi-sun-fill"></i></span>
+            <span class="language-copy"><strong data-i18n="Modo claro">Modo claro</strong><small data-i18n="Fondo claro y texto oscuro">Fondo claro y texto oscuro</small></span>
+            <i class="bi bi-check-circle-fill language-check" aria-hidden="true"></i>
+        </button>
+        <button class="language-option" type="button" data-theme="dark" aria-pressed="false">
+            <span class="language-flag language-flag-en" aria-hidden="true"><i class="bi bi-moon-stars-fill"></i></span>
+            <span class="language-copy"><strong data-i18n="Modo oscuro">Modo oscuro</strong><small data-i18n="Fondo oscuro y texto claro">Fondo oscuro y texto claro</small></span>
+            <i class="bi bi-check-circle-fill language-check" aria-hidden="true"></i>
+        </button>
+    </div>
+    <div class="language-confirmation" id="themeFeedback" role="status" aria-live="polite">
+        <i class="bi bi-palette me-2"></i><span data-i18n="La preferencia se guarda en este navegador.">La preferencia se guarda en este navegador.</span>
     </div>
 </section>

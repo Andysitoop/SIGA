@@ -54,18 +54,51 @@ class Alumno
     /**
      * Busca alumnos por nombre o apellido
      */
-    public static function search(string $query, int $limit = 20): array
+    public static function search(
+        string $query,
+        int $limit = 20,
+        ?int $idCarrera = null,
+        ?int $idSeccion = null,
+        ?int $idCurso = null
+    ): array
     {
         $sql = "SELECT a.*, c.nombre as nombre_carrera 
                 FROM alumnos a 
                 INNER JOIN carreras c ON a.id_carrera = c.id_carrera 
-                WHERE a.activo = 1 
-                AND (a.nombres LIKE ? OR a.apellidos LIKE ? OR CONCAT(a.nombres, ' ', a.apellidos) LIKE ?)
-                ORDER BY a.apellidos ASC, a.nombres ASC 
-                LIMIT ?";
-        
-        $searchTerm = "%$query%";
-        return Database::query($sql, [$searchTerm, $searchTerm, $searchTerm, $limit]);
+                WHERE a.activo = 1";
+        $params = [];
+
+        if ($query !== '') {
+            $searchTerm = '%' . $query . '%';
+            $sql .= " AND (a.nombres LIKE ? OR a.apellidos LIKE ?
+                      OR CONCAT(a.nombres, ' ', a.apellidos) LIKE ?
+                      OR CONCAT(a.apellidos, ' ', a.nombres) LIKE ?)";
+            array_push($params, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+        }
+
+        if ($idCarrera !== null) {
+            $sql .= " AND a.id_carrera = ?";
+            $params[] = $idCarrera;
+        }
+
+        if ($idSeccion !== null || $idCurso !== null) {
+            $sql .= " AND EXISTS (
+                        SELECT 1 FROM notas n
+                        WHERE n.id_alumno = a.id_alumno AND n.activo = 1";
+            if ($idSeccion !== null) {
+                $sql .= " AND n.id_seccion = ?";
+                $params[] = $idSeccion;
+            }
+            if ($idCurso !== null) {
+                $sql .= " AND n.id_curso = ?";
+                $params[] = $idCurso;
+            }
+            $sql .= ')';
+        }
+
+        $sql .= " ORDER BY a.apellidos ASC, a.nombres ASC LIMIT ?";
+        $params[] = $limit;
+        return Database::query($sql, $params);
     }
     
     /**

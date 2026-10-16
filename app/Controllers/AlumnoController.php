@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Models\Alumno;
 use App\Models\Carrera;
+use App\Models\Curso;
 use App\Models\Nota;
+use App\Models\Seccion;
 use App\Helpers\Access;
 use App\Helpers\Csrf;
 use App\Helpers\Validation;
@@ -65,19 +67,37 @@ class AlumnoController
         }
         
         $f3 = \Base::instance();
-        $query = $f3->get('GET.q') ?? '';
+        $queryValue = $f3->get('GET.q');
+        $query = is_scalar($queryValue) ? trim((string)$queryValue) : '';
+        $idCarrera = $this->filterId($f3->get('GET.id_carrera'));
+        $idSeccion = $this->filterId($f3->get('GET.id_seccion'));
+        $idCurso = $this->filterId($f3->get('GET.id_curso'));
+        $hasSearch = $query !== '' || $idCarrera !== null || $idSeccion !== null || $idCurso !== null;
+
+        $alumnos = $hasSearch
+            ? $this->withPhotoUrls(Alumno::search($query, 20, $idCarrera, $idSeccion, $idCurso))
+            : [];
         
-        $alumnos = [];
-        if (!empty($query)) {
-            $alumnos = $this->withPhotoUrls(Alumno::search($query, 20));
-        }
-        
+        $f3->set('carreras', Carrera::getAll());
+        $f3->set('secciones', Seccion::getAll());
+        $f3->set('cursos', Curso::getAll());
         $f3->set('alumnos', $alumnos);
         $f3->set('query', $query);
+        $f3->set('id_carrera', $idCarrera ?? '');
+        $f3->set('id_seccion', $idSeccion ?? '');
+        $f3->set('id_curso', $idCurso ?? '');
+        $f3->set('has_search', $hasSearch);
         $f3->set('title', 'Buscar Alumnos');
         $f3->set('content', 'alumnos/buscar.html');
         
         echo \Template::instance()->render('layouts/main.html');
+    }
+
+    private function filterId(mixed $value): ?int
+    {
+        return is_scalar($value) && ctype_digit((string)$value) && (int)$value > 0
+            ? (int)$value
+            : null;
     }
 
     private function withPhotoUrls(array $alumnos): array

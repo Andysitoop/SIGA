@@ -101,10 +101,44 @@
                                    value="{{ @data.nota }}"
                                </check>
                                min="0" max="{{ @nota_maxima }}" step="0.01" required>
-                        <div class="form-text">Una nota menor que {{ @nota_minima }} se considera reprobada.</div>
+                        <div class="form-text">
+                            Se aprueba con {{ @nota_minima }} o más; cualquier nota inferior reprueba.
+                            Estado: <span id="estado-nota" class="badge bg-secondary">Ingrese una nota</span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <script>
+                (() => {
+                    const input = document.getElementById('nota');
+                    const status = document.getElementById('estado-nota');
+                    const minimumPassingGrade = Number('{{ @nota_minima }}');
+                    const maximumGrade = Number('{{ @nota_maxima }}');
+
+                    const updateStatus = () => {
+                        if (input.value === '') {
+                            status.textContent = 'Ingrese una nota';
+                            status.className = 'badge bg-secondary';
+                            return;
+                        }
+
+                        const grade = Number(input.value);
+                        if (!Number.isFinite(grade) || grade < 0 || grade > maximumGrade) {
+                            status.textContent = 'Fuera de rango';
+                            status.className = 'badge bg-warning text-dark';
+                            return;
+                        }
+
+                        const approved = Number.isFinite(grade) && grade >= minimumPassingGrade;
+                        status.textContent = approved ? 'Aprobado' : 'Reprobado';
+                        status.className = `badge ${approved ? 'bg-success' : 'bg-danger'}`;
+                    };
+
+                    input.addEventListener('input', updateStatus);
+                    updateStatus();
+                })();
+            </script>
             
             <div class="d-flex justify-content-end gap-2">
                 <a href="/notas/historial/{{ @alumno.id_alumno }}" class="btn btn-secondary">Cancelar</a>

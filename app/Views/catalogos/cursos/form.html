@@ -13,29 +13,35 @@
             <div class="mb-3">
                 <label for="codigo" class="form-label">Código *</label>
                 <input type="text" class="form-control" id="codigo" name="codigo" 
-                       value="{{ @data.codigo|esc }}"
+                       <check if="{{ @curso }}">
+                           value="{{ @curso.codigo|esc }}"
+                       <else>
+                           value="{{ @data.codigo|esc }}"
+                       </check>
                        required>
             </div>
             
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre *</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" 
-                       value="{{ @data.nombre|esc }}"
+                       <check if="{{ @curso }}">
+                           value="{{ @curso.nombre|esc }}"
+                       <else>
+                           value="{{ @data.nombre|esc }}"
+                       </check>
                        required>
             </div>
             
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="activo" name="activo" 
-                       <check if="{{ @form_submitted }}">
-                           <check if="{{ @data.activo }}">checked</check>
+                       <check if="{{ @curso }}">
+                           <check if="{{ @curso.activo }}">checked</check>
                        <else>
-                           <check if="{{ @curso }}">
-                               <check if="{{ @curso.activo }}">checked</check>
-                           <else>
-                               checked
-                           </check>
+                           <check if="{{ @data.activo }}">checked</check>
                        </check>
-                       >
+                       <else>
+                           checked
+                       </check>>
                 <label class="form-check-label" for="activo">Activo</label>
             </div>
             

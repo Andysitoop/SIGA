@@ -8,10 +8,44 @@
 <div class="card mb-4">
     <div class="card-body">
         <form action="/alumnos/buscar" method="GET" class="row g-3">
-            <div class="col-md-10">
-                <input type="text" name="q" class="form-control" placeholder="Buscar por nombre o apellido..." value="{{ @query|esc }}" required autofocus>
+            <div class="col-md-6">
+                <label class="form-label" for="buscar-alumno">Nombre o apellido</label>
+                <input type="text" id="buscar-alumno" name="q" class="form-control" placeholder="Buscar por nombre o apellido..." value="{{ @query|esc }}" autofocus>
             </div>
             <div class="col-md-2">
+                <label class="form-label" for="id_carrera">Carrera</label>
+                <select class="form-select" id="id_carrera" name="id_carrera">
+                    <option value="">Todas las carreras</option>
+                    <repeat group="{{ @carreras }}" value="{{ @carrera }}">
+                        <option value="{{ @carrera.id_carrera }}" <check if="{{ @id_carrera == @carrera.id_carrera }}">selected</check>>
+                            {{ @carrera.nombre }}
+                        </option>
+                    </repeat>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" for="id_seccion">Sección</label>
+                <select class="form-select" id="id_seccion" name="id_seccion">
+                    <option value="">Todas las secciones</option>
+                    <repeat group="{{ @secciones }}" value="{{ @seccion }}">
+                        <option value="{{ @seccion.id_seccion }}" <check if="{{ @id_seccion == @seccion.id_seccion }}">selected</check>>
+                            {{ @seccion.nombre }}
+                        </option>
+                    </repeat>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label" for="id_curso">Curso</label>
+                <select class="form-select" id="id_curso" name="id_curso">
+                    <option value="">Todos los cursos</option>
+                    <repeat group="{{ @cursos }}" value="{{ @curso }}">
+                        <option value="{{ @curso.id_curso }}" <check if="{{ @id_curso == @curso.id_curso }}">selected</check>>
+                            {{ @curso.codigo }} - {{ @curso.nombre }}
+                        </option>
+                    </repeat>
+                </select>
+            </div>
+            <div class="col-12">
                 <button type="submit" class="btn btn-primary w-100">
                     <i class="bi bi-search"></i> Buscar
                 </button>
@@ -20,7 +54,7 @@
     </div>
 </div>
 
-<check if="{{ @query }}">
+<check if="{{ @has_search }}">
     <div class="card">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -64,7 +98,7 @@
                         </repeat>
                         <check if="{{ count(@alumnos) == 0 }}">
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">No se encontraron resultados para "{{ @query }}"</td>
+                                <td colspan="5" class="text-center text-muted py-4">No se encontraron alumnos con esos criterios.</td>
                             </tr>
                         </check>
                     </tbody>
@@ -72,4 +106,7 @@
             </div>
         </div>
     </div>
+</check>
+<check if="{{ @has_search == false }}">
+    <p class="text-muted">Escribe un nombre o apellido, o selecciona uno o más filtros para buscar alumnos.</p>
 </check>
